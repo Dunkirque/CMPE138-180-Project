@@ -38,11 +38,11 @@ $mysqli->close();
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Insert External Agency Data</title>
+    <title>Insert License Requestor Data</title>
 </head>
 <body>
 
-    <h2>Insert External Agency Data</h2>
+    <h2>Insert License Requestor Data</h2>
 
     <form method="post" action="">
         <label for="ApplicationNumber">Application Number:</label>
@@ -51,7 +51,7 @@ $mysqli->close();
         <button type="submit">Submit</button>
     </form>
 
-    <h2>External Agency Data List</h2>
+    <h2>License Requestor Data List</h2>
 
     <ul>
         <?php if (isset($rowsExternalAgency) && is_array($rowsExternalAgency)): ?>
