@@ -24,9 +24,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }       
 
-// Fetch all records from the ExternalAgency table
-$resultLicenseRequestor = $mysqli->query("SELECT * FROM LicenseRequestor");
-$rowsLicenseRequestor = $resultLicenseRequestor->fetch_all(MYSQLI_ASSOC);
+// Fetch data from LicenseRequestor and join with Person
+$query = "SELECT LicenseRequestor.ApplicationNumber, Person.PersonFname, Person.PersonLname, Person.PersonSSN, Person.PersonDOB
+          FROM LicenseRequestor
+          JOIN Person ON LicenseRequestor.PersonSSN = Person.PersonSSN";
+
+$result = $mysqli->query($query);
+
+// Check if the query was successful
+if ($result) {
+    // Fetch all records as an associative array
+    $rowsLicenseRequestor = $result->fetch_all(MYSQLI_ASSOC);
+} else {
+    // Handle the case where the query failed
+    echo "Error: " . $mysqli->error;
+}
 
 // Close the database connection
 $mysqli->close();
@@ -56,7 +68,7 @@ $mysqli->close();
     <ul>
         <?php if (isset($rowsLicenseRequestor) && is_array($rowsLicenseRequestor)): ?>
             <?php foreach ($rowsLicenseRequestor as $row): ?>
-                <li><?php echo "Application Number: {$row['ApplicationNumber']}"; ?></li>
+                <li><?php echo "Application Number: {$row['ApplicationNumber']}, Name: {$row['PersonFname']} {$row['PersonLname']}, SSN: {$row['PersonSSN']}, DOB: {$row['PersonDOB']}"; ?></li>
             <?php endforeach; ?>
         <?php endif; ?>
     </ul>
