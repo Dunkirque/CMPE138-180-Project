@@ -76,7 +76,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </ul>
 
     <a href="DrivingSchool.php">
-        <button type="button">Go to Driving School</button>
+        <button type="button">Go to Driving School Data</button>
+    </a>
+    <a href="Employee.php">
+        <button type="button">Go to Employee Data</button>
+    </a>
+    <a href="ExternalAgency.php">
+        <button type="button">Go to External Agency Data</button>
     </a>
 </body>
 </html>
