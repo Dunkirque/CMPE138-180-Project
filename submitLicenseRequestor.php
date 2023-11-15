@@ -9,7 +9,7 @@ $ApplicationNumber = '';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Retrieve form data (sanitize input as needed)
     $ApplicationNumber = mysqli_real_escape_string($mysqli, $_POST["ApplicationNumber"]);
-
+    
     // Insert data into the database
     $query = "INSERT INTO LicenseRequestor (ApplicationNumber) 
               VALUES ('$ApplicationNumber')";

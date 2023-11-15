@@ -4,21 +4,23 @@ require_once('db_connect.php');
 
 // Initialize variables
 $ApplicationNumber = '';
+$PersonSSN = '';
 
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Retrieve form data (sanitize input as needed)
     $ApplicationNumber = mysqli_real_escape_string($mysqli, $_POST["ApplicationNumber"]);
+    $PersonSSN = mysqli_real_escape_string($mysqli, $_POST["PersonSSN"]);
 
-    // Insert data into the database
-    $query = "INSERT INTO LicenseRequestor (ApplicationNumber) 
-              VALUES ('$ApplicationNumber')";
+    // Insert data into the LicenseRequestor table
+    $query = "INSERT INTO LicenseRequestor (ApplicationNumber, PersonSSN) 
+              VALUES ('$ApplicationNumber', '$PersonSSN')";
 
     if ($mysqli->query($query) === TRUE) {
         echo "Record inserted successfully";
 
         // Clear form fields after successful insertion
-        $ApplicationNumber = '';
+        $ApplicationNumber = $PersonSSN = '';
     } else {
         echo "Error: " . $query . "<br>" . $mysqli->error;
     }
@@ -59,6 +61,9 @@ $mysqli->close();
     <form method="post" action="">
         <label for="ApplicationNumber">Application Number:</label>
         <input type="text" name="ApplicationNumber" value="<?php echo $ApplicationNumber; ?>" required><br>
+
+        <label for="PersonSSN">Person SSN:</label>
+        <input type="text" name="PersonSSN" value="<?php echo $PersonSSN; ?>" required><br>
 
         <button type="submit">Submit</button>
     </form>
