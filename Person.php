@@ -18,10 +18,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
               VALUES ('$PersonLname', '$PersonFname', '$PersonSSN', '$PersonDOB')";
 
     if ($mysqli->query($query) === TRUE) {
-        echo "Record inserted successfully";
-
         // Clear form fields after successful insertion
         $PersonLname = $PersonFname = $PersonSSN = $PersonDOB = '';
+
+        // Redirect user based on selected role
+        if (isset($_POST["UserRole"])) {
+            $selectedRole = $_POST["UserRole"];
+            switch ($selectedRole) {
+                case 'LicenseRequestor':
+                    header('Location: LicenseRequestor.php');
+                    exit();
+                case 'CurrentDriver':
+                    header('Location: CurrentDriver.php');
+                    exit();
+                case 'VehicleRegistrationRequestor':
+                    header('Location: VehicleRegistrationRequestor.php');
+                    exit();
+                // Add more cases if needed for additional roles
+            }
+        }
     } else {
         echo "Error: " . $query . "<br>" . $mysqli->error;
     }
@@ -70,21 +85,6 @@ $mysqli->close();
 
         <button type="submit">Submit</button>
     </form>
-
-    <?php
-    // Show button based on selected role after form submission
-    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["UserRole"])) {
-        $selectedRole = $_POST["UserRole"];
-
-        if ($selectedRole === 'LicenseRequestor') {
-            echo '<a href="LicenseRequestor.php"><button type="button">Go to License Requestor</button></a>';
-        } elseif ($selectedRole === 'CurrentDriver') {
-            echo '<a href="CurrentDriver.php"><button type="button">Go to Current Driver</button></a>';
-        } elseif ($selectedRole === 'VehicleRegistrationRequestor') {
-            echo '<a href="VehicleRegistrationRequestor.php"><button type="button">Go to Vehicle Registration Requestor</button></a>';
-        }
-    }
-    ?>
 
     <h2>Person Data List</h2>
 
