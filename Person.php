@@ -23,17 +23,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Clear form fields after successful insertion
         $PersonLname = $PersonFname = $PersonSSN = $PersonDOB = '';
-
-        // Fetch all records from the database
-        $result = $mysqli->query("SELECT * FROM Person");
-        $rows = $result->fetch_all(MYSQLI_ASSOC);
     } else {
         echo "Error: " . $query . "<br>" . $mysqli->error;
     }
-
-    // Close the database connection
-    $mysqli->close();
 }
+
+// Fetch all records from the database
+$result = $mysqli->query("SELECT * FROM Person");
+$rows = $result->fetch_all(MYSQLI_ASSOC);
+
+// Close the database connection
+$mysqli->close();
 
 ?>
 
