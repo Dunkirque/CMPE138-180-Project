@@ -76,7 +76,7 @@ $mysqli->close();
     <a href="ExternalAgency.php">
         <button type="button">Go to External Agency Data</button>
     </a>
-    <a href="Employeee.php">
+    <a href="Employee.php">
         <button type="button">Go to Employee Data</button>
     </a>
 </body>
