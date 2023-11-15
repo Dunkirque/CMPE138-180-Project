@@ -11,7 +11,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $ApplicationNumber = mysqli_real_escape_string($mysqli, $_POST["ApplicationNumber"]);
 
     // Insert data into the database
-    $query = "INSERT INTO ExternalAgency (ApplicationNumber) 
+    $query = "INSERT INTO LicenseRequestor (ApplicationNumber) 
               VALUES ('$ApplicationNumber')";
 
     if ($mysqli->query($query) === TRUE) {
@@ -25,8 +25,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }       
 
 // Fetch all records from the ExternalAgency table
-$resultExternalAgency = $mysqli->query("SELECT * FROM ExternalAgency");
-$rowsExternalAgency = $resultExternalAgency->fetch_all(MYSQLI_ASSOC);
+$resultLicenseRequestor = $mysqli->query("SELECT * FROM LicenseRequestor");
+$rowsLicenseRequestor = $resultLicenseRequestor->fetch_all(MYSQLI_ASSOC);
 
 // Close the database connection
 $mysqli->close();
@@ -54,8 +54,8 @@ $mysqli->close();
     <h2>License Requestor Data List</h2>
 
     <ul>
-        <?php if (isset($rowsExternalAgency) && is_array($rowsExternalAgency)): ?>
-            <?php foreach ($rowsExternalAgency as $row): ?>
+        <?php if (isset($rowsLicenseRequestor) && is_array($rowsLicenseRequestor)): ?>
+            <?php foreach ($rowsLicenseRequestor as $row): ?>
                 <li><?php echo "Application Number: {$row['ApplicationNumber']}"; ?></li>
             <?php endforeach; ?>
         <?php endif; ?>
