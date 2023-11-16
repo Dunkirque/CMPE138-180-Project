@@ -10,19 +10,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Retrieve form data (sanitize input as needed)
     $EmpSSN = mysqli_real_escape_string($mysqli, $_POST["EmpSSN"]);
 
-    // Insert data into the AdminEmp table
-    $query = "INSERT INTO AdminEmp (EmpSSN) 
-              VALUES ('$EmpSSN')";
+    // Check if the EmpSSN already exists in any subclass
+    $checkQuery = "SELECT * FROM AdminEmp WHERE EmpSSN = '$EmpSSN'
+                   UNION ALL
+                   SELECT * FROM ApplicationEmp WHERE EmpSSN = '$EmpSSN'
+                   UNION ALL
+                   SELECT * FROM ComplianceAgent WHERE EmpSSN = '$EmpSSN'
+                   UNION ALL
+                   SELECT * FROM Auditor WHERE EmpSSN = '$EmpSSN'
+                   UNION ALL
+                   SELECT * FROM DataEntryEmp WHERE EmpSSN = '$EmpSSN'
+                   UNION ALL
+                   SELECT * FROM Inspector WHERE EmpSSN = '$EmpSSN'";
 
-    if ($mysqli->query($query) === TRUE) {
-        echo "Record inserted successfully";
+    $checkResult = $mysqli->query($checkQuery);
 
-        // Clear form fields after successful insertion
-        $EmpSSN = '';
+    if ($checkResult && $checkResult->num_rows > 0) {
+        echo "Error: EmpSSN already used in another role.";
     } else {
-        echo "Error: " . $query . "<br>" . $mysqli->error;
+        // Insert data into the AdminEmp table
+        $insertQuery = "INSERT INTO AdminEmp (EmpSSN) 
+                        VALUES ('$EmpSSN')";
+
+        if ($mysqli->query($insertQuery) === TRUE) {
+            echo "Record inserted successfully";
+
+            // Clear form fields after successful insertion
+            $EmpSSN = '';
+        } else {
+            echo "Error inserting record: " . $mysqli->error;
+        }
     }
-}       
+}
 
 // Fetch data from AdminEmp and join with Employee
 $query = "SELECT Employee.EmpSSN, Employee.EmpFname, Employee.EmpLname, Employee.EmpNumber
@@ -57,7 +76,7 @@ $mysqli->close();
     <h2>Insert Admin Employee Data</h2>
 
     <form method="post" action="">
-        <label for="EmpSSN">Employee SSN:</label>
+        <label for="EmpSSN">Admin Employee SSN:</label>
         <input type="text" name="EmpSSN" value="<?php echo $EmpSSN; ?>" required><br>
 
         <button type="submit">Submit</button>
@@ -68,7 +87,7 @@ $mysqli->close();
     <ul>
         <?php if (isset($rowsAdminEmp) && is_array($rowsAdminEmp)): ?>
             <?php foreach ($rowsAdminEmp as $row): ?>
-                <li><?php echo "Employee SSN: {$row['EmpSSN']}, Name: {$row['EmpFname']} {$row['EmpLname']}, Employee Number: {$row['EmpNumber']}"; ?></li>
+                <li><?php echo "Admin Employee SSN: {$row['EmpSSN']}, Name: {$row['EmpFname']} {$row['EmpLname']}, Employee Number: {$row['EmpNumber']}"; ?></li>
             <?php endforeach; ?>
         <?php endif; ?>
     </ul>
