@@ -22,11 +22,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($mysqli->query($query) === TRUE) {
         echo "Record inserted successfully";
-
-        // Close the database connection
-        $mysqli->close();
     } else {
         echo "Error: " . $query . "<br>" . $mysqli->error;
     }
+
+    // Close the database connection
+    $mysqli->close();
 }
 ?>
