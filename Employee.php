@@ -18,14 +18,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
               VALUES ('$EmpSSN', '$EmpLname', '$EmpFname', '$EmpNumber')";
 
     if ($mysqli->query($query) === TRUE) {
-        echo "Record inserted successfully";
-
         // Clear form fields after successful insertion
         $EmpSSN = $EmpLname = $EmpFname = $EmpNumber = '';
+
+        // Redirect user based on selected role
+        if (isset($_POST["UserRole"])) {
+            $selectedRole = $_POST["UserRole"];
+            switch ($selectedRole) {
+                case 'AdminEmp':
+                    header('Location: AdminEmp.php');
+                    exit();
+                case 'ApplicationEmp':
+                    header('Location: ApplicationEmp.php');
+                    exit();
+                case 'Auditor':
+                    header('Location: Auditor.php');
+                    exit();
+                case 'ComplianceAgent':
+                    header('Location: ComplianceAgent.php');
+                    exit();
+                case 'DataEntryEmp':
+                    header('Location: DataEntryEmp.php');
+                    exit();
+                // Add more cases if needed for additional roles
+            }
+        }
     } else {
         echo "Error: " . $query . "<br>" . $mysqli->error;
     }
-}       
+}
 
 // Fetch all records from the Employee table
 $resultEmployee = $mysqli->query("SELECT * FROM Employee");
@@ -60,6 +81,16 @@ $mysqli->close();
         <label for="EmpNumber">Employee Number:</label>
         <input type="text" name="EmpNumber" value="<?php echo $EmpNumber; ?>" required><br>
 
+        <!-- Add a dropdown for user role selection -->
+        <label for="UserRole">Select Role:</label>
+        <select name="UserRole">
+            <option value="AdminEmp">Admin Employee</option>
+            <option value="ApplicationEmp">Application Employee</option>
+            <option value="Auditor">Auditor</option>
+            <option value="ComplianceAgent">Compliance Agent</option>
+            <option value="DataEntryEmp">Data Entry Employee</option>
+        </select>
+
         <button type="submit">Submit</button>
     </form>
 
@@ -72,6 +103,8 @@ $mysqli->close();
             <?php endforeach; ?>
         <?php endif; ?>
     </ul>
+
+    <!-- No need for buttons related to specific roles here -->
 
     <a href="Person.php">
         <button type="button">Go to Person Data</button>

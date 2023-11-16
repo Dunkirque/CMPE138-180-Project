@@ -25,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }       
 
 // Fetch data from AdminEmp and join with Employee
-$query = "SELECT AdminEmp.EmpSSN, Employee.EmpFname, Employee.EmpLname, Employee.EmpNumber, Employee.EmpSSN AS PersonSSN, Employee.EmpDOB AS PersonDOB
+$query = "SELECT Employee.EmpSSN, Employee.EmpFname, Employee.EmpLname, Employee.EmpNumber
           FROM AdminEmp
           JOIN Employee ON AdminEmp.EmpSSN = Employee.EmpSSN";
 
@@ -68,7 +68,7 @@ $mysqli->close();
     <ul>
         <?php if (isset($rowsAdminEmp) && is_array($rowsAdminEmp)): ?>
             <?php foreach ($rowsAdminEmp as $row): ?>
-                <li><?php echo "Employee SSN: {$row['EmpSSN']}, Name: {$row['EmpFname']} {$row['EmpLname']}, SSN: {$row['PersonSSN']}, DOB: {$row['PersonDOB']}"; ?></li>
+                <li><?php echo "Employee SSN: {$row['EmpSSN']}, Name: {$row['EmpFname']} {$row['EmpLname']}, Employee Number: {$row['EmpNumber']}"; ?></li>
             <?php endforeach; ?>
         <?php endif; ?>
     </ul>
