@@ -57,13 +57,13 @@ $mysqli->close();
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Insert Current Driver Data</title>
+    <title>Insert Vehicle Registration Requestor Data</title>
 </head>
 <body>
 
-    <h2>Insert Current Driver Data</h2>
+    <h2>Insert Vehicle Registration Requestor Data</h2>
 
-    <form method="post" action="VehicleRegRequestor.php">
+    <form method="post" action="">
         <label for="DLNumber">DL Number:</label>
         <input type="text" name="DLNumber" value="<?php echo $DLNumber; ?>" required><br>
 
