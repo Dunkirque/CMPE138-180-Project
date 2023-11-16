@@ -10,18 +10,37 @@ $EmpSSN = '';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Retrieve form data (sanitize input as needed)
     $EmpSSN = mysqli_real_escape_string($mysqli, $_POST["EmpSSN"]);
+    
+    // Check if the EmpSSN already exists in any subclass
+    $checkQuery = "SELECT * FROM AdminEmp WHERE EmpSSN = '$EmpSSN'
+                   UNION ALL
+                   SELECT * FROM ApplicationEmp WHERE EmpSSN = '$EmpSSN'
+                   UNION ALL
+                   SELECT * FROM ComplianceAgent WHERE EmpSSN = '$EmpSSN'
+                   UNION ALL
+                   SELECT * FROM Auditor WHERE EmpSSN = '$EmpSSN'
+                   UNION ALL
+                   SELECT * FROM DataEntryEmp WHERE EmpSSN = '$EmpSSN'
+                   UNION ALL
+                   SELECT * FROM Inspector WHERE EmpSSN = '$EmpSSN'";
+    $checkResult = $mysqli->query($checkQuery);
 
-    // Insert data into the ApplicationEmp table
-    $query = "INSERT INTO ApplicationEmp (EmpSSN) 
-              VALUES ('$EmpSSN')";
-
-    if ($mysqli->query($query) === TRUE) {
-        echo "Record inserted successfully";
-
-        // Clear form fields after successful insertion
-        $EmpSSN = '';
+    if($checkResult && $checkResult->num_rows > 0)
+    {
+        echo "Error: EmpSSN already used in another role.";
     } else {
-        echo "Error: " . $query . "<br>" . $mysqli->error;
+        // Insert data into the ApplicationEmp table
+        $insertQuery = "INSERT INTO ApplicationEmp (EmpSSN) 
+                        VALUES ('$EmpSSN')";
+
+        if ($mysqli->query($insertQuery) === TRUE) {
+            echo "Record inserted successfully";
+
+            // Clear form fields after successful insertion
+            $EmpSSN = '';
+        } else {
+            echo "Error inserting record: " . $mysqli->error;
+        }
     }
 }       
 
