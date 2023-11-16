@@ -16,8 +16,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $DLExpDate = mysqli_real_escape_string($mysqli, $_POST["DLExpDate"]);
     $PersonSSN = mysqli_real_escape_string($mysqli, $_POST["PersonSSN"]);
 
-    // Insert data into the CurrentDriver table
-    $query = "INSERT INTO CurrentDriver (DLNumber, InsurancePolicyNumber, DLExpDate, PersonSSN) 
+    // Insert data into the VehicleRegRequestor table
+    $query = "INSERT INTO VehicleRegRequestor (DLNumber, InsurancePolicyNumber, DLExpDate, PersonSSN) 
               VALUES ('$DLNumber', '$InsurancePolicyNumber', '$DLExpDate', '$PersonSSN')";
 
     if ($mysqli->query($query) === TRUE) {
@@ -30,18 +30,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }       
 
-// Fetch data from CurrentDriver and join with Person
-$query = "SELECT CurrentDriver.DLNumber, CurrentDriver.InsurancePolicyNumber, CurrentDriver.DLExpDate, 
+// Fetch data from VehicleRegRequestor and join with Person
+$query = "SELECT VehicleRegRequestor.DLNumber, VehicleRegRequestor.InsurancePolicyNumber, VehicleRegRequestor.DLExpDate, 
                  Person.PersonFname, Person.PersonLname, Person.PersonSSN, Person.PersonDOB
-          FROM CurrentDriver
-          JOIN Person ON CurrentDriver.PersonSSN = Person.PersonSSN";
+          FROM VehicleRegRequestor
+          JOIN Person ON VehicleRegRequestor.PersonSSN = Person.PersonSSN";
 
 $result = $mysqli->query($query);
 
 // Check if the query was successful
 if ($result) {
     // Fetch all records as an associative array
-    $rowsCurrentDriver = $result->fetch_all(MYSQLI_ASSOC);
+    $rowsVehicleRegRequestor = $result->fetch_all(MYSQLI_ASSOC);
 } else {
     // Handle the case where the query failed
     echo "Error: " . $mysqli->error;
@@ -63,7 +63,7 @@ $mysqli->close();
 
     <h2>Insert Current Driver Data</h2>
 
-    <form method="post" action="CurrentDriver.php">
+    <form method="post" action="VehicleRegRequestor.php">
         <label for="DLNumber">DL Number:</label>
         <input type="text" name="DLNumber" value="<?php echo $DLNumber; ?>" required><br>
 
@@ -79,11 +79,11 @@ $mysqli->close();
         <button type="submit">Submit</button>
     </form>
 
-    <h2>Current Driver Data List</h2>
+    <h2>Vehicle Registration Requestor Data List</h2>
 
     <ul>
-        <?php if (isset($rowsCurrentDriver) && is_array($rowsCurrentDriver)): ?>
-            <?php foreach ($rowsCurrentDriver as $row): ?>
+        <?php if (isset($rowsVehicleRegRequestor) && is_array($rowsVehicleRegRequestor)): ?>
+            <?php foreach ($rowsVehicleRegRequestor as $row): ?>
                 <li><?php echo "DL Number: {$row['DLNumber']}, 
                              Insurance Policy Number: {$row['InsurancePolicyNumber']}, 
                              DL Expiry Date: {$row['DLExpDate']},
