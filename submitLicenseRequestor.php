@@ -2,6 +2,7 @@
 // Include the database connection file
 require_once('db_connect.php');
 
+//May need to PersonSSN
 // Initialize variables
 $ApplicationNumber = '';
 
