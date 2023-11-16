@@ -12,8 +12,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $VehicleNumber = mysqli_real_escape_string($mysqli, $_POST["VehicleNumber"]);
     $PersonSSN = mysqli_real_escape_string($mysqli, $_POST["PersonSSN"]);
 
-    // Insert data into the VehicleRegistrationRequestor table
-    $query = "INSERT INTO VehicleRegistrationRequestor (VehicleNumber, PersonSSN) 
+    // Insert data into the VehicleRegRequestor table
+    $query = "INSERT INTO VehicleRegRequestor (VehicleNumber, PersonSSN) 
               VALUES ('$VehicleNumber', '$PersonSSN')";
 
     if ($mysqli->query($query) === TRUE) {

@@ -12,8 +12,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $VehicleNumber = mysqli_real_escape_string($mysqli, $_POST["VehicleNumber"]);
     $PersonSSN = mysqli_real_escape_string($mysqli, $_POST["PersonSSN"]);
 
-    // Insert data into the VehicleRegistrationRequestor table
-    $query = "INSERT INTO VehicleRegistrationRequestor (VehicleNumber, PersonSSN) 
+    // Insert data into the VehicleRegRequestor table
+    $query = "INSERT INTO VehicleRegRequestor (VehicleNumber, PersonSSN) 
               VALUES ('$VehicleNumber', '$PersonSSN')";
 
     if ($mysqli->query($query) === TRUE) {
@@ -26,18 +26,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }       
 
-// Fetch data from VehicleRegistrationRequestor and join with Person
-$query = "SELECT VehicleRegistrationRequestor.VehicleNumber, 
+// Fetch data from VehicleRegRequestor and join with Person
+$query = "SELECT VehicleRegRequestor.VehicleNumber, 
                  Person.PersonFname, Person.PersonLname, Person.PersonSSN, Person.PersonDOB
-          FROM VehicleRegistrationRequestor
-          JOIN Person ON VehicleRegistrationRequestor.PersonSSN = Person.PersonSSN";
+          FROM VehicleRegRequestor
+          JOIN Person ON VehicleRegRequestor.PersonSSN = Person.PersonSSN";
 
 $result = $mysqli->query($query);
 
 // Check if the query was successful
 if ($result) {
     // Fetch all records as an associative array
-    $rowsVehicleRegistrationRequestor = $result->fetch_all(MYSQLI_ASSOC);
+    $rowsVehicleRegRequestor = $result->fetch_all(MYSQLI_ASSOC);
 } else {
     // Handle the case where the query failed
     echo "Error: " . $mysqli->error;
@@ -59,7 +59,7 @@ $mysqli->close();
 
     <h2>Insert Vehicle Registration Requestor Data</h2>
 
-    <form method="post" action="VehicleRegistrationRequestor.php">
+    <form method="post" action="">
         <label for="VehicleNumber">Vehicle Number:</label>
         <input type="text" name="VehicleNumber" value="<?php echo $VehicleNumber; ?>" required><br>
 
@@ -72,8 +72,8 @@ $mysqli->close();
     <h2>Vehicle Registration Requestor Data List</h2>
 
     <ul>
-        <?php if (isset($rowsVehicleRegistrationRequestor) && is_array($rowsVehicleRegistrationRequestor)): ?>
-            <?php foreach ($rowsVehicleRegistrationRequestor as $row): ?>
+        <?php if (isset($rowsVehicleRegRequestor) && is_array($rowsVehicleRegRequestor)): ?>
+            <?php foreach ($rowsVehicleRegRequestor as $row): ?>
                 <li><?php echo "Vehicle Number: {$row['VehicleNumber']}, 
                              Name: {$row['PersonFname']} {$row['PersonLname']}, 
                              SSN: {$row['PersonSSN']}, 
