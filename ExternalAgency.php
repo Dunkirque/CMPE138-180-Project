@@ -22,10 +22,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Clear form fields after successful insertion
         $EAName = $Type = $POC = $AdminInCharge = '';
+
+        // Redirect based on selected role
+        if (isset($_POST["SubmitRole"])) {
+            $selectedRole = $_POST["SubmitRole"];
+            switch ($selectedRole) {
+                case 'GovAgencies':
+                    header("Location: GovAgencies.php");
+                    exit();
+                case 'LawAgencies':
+                    header("Location: LawAgencies.php");
+                    exit();
+                case 'VehicleManu':
+                    header("Location: VehicleManu.php");
+                    exit();
+            }
+        }
     } else {
         echo "Error: " . $query . "<br>" . $mysqli->error;
     }
-}       
+}
 
 // Fetch all records from the ExternalAgency table
 $resultExternalAgency = $mysqli->query("SELECT * FROM ExternalAgency");
@@ -59,6 +75,13 @@ $mysqli->close();
 
         <label for="AdminInCharge">Admin In Charge:</label>
         <input type="text" name="AdminInCharge" value="<?php echo $AdminInCharge; ?>" required><br>
+
+        <label for="SubmitRole">Select Role:</label>
+        <select name="SubmitRole" required>
+            <option value="GovAgencies">Government Agencies</option>
+            <option value="LawAgencies">Law Enforcement Agencies</option>
+            <option value="VehicleManu">Vehicle Manufacturers</option>
+        </select><br>
 
         <button type="submit">Submit</button>
     </form>

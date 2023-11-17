@@ -40,7 +40,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 case 'DataEntryEmp':
                     header('Location: DataEntryEmp.php');
                     exit();
-                // Add more cases if needed for additional roles
+                case 'Inspector':
+                    header('Location: Inspector.php');
+                    exit();
             }
         }
     } else {
