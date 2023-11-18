@@ -13,40 +13,54 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $EmpFname = mysqli_real_escape_string($mysqli, $_POST["EmpFname"]);
     $EmpNumber = mysqli_real_escape_string($mysqli, $_POST["EmpNumber"]);
 
-    // Insert data into the database
-    $query = "INSERT INTO Employee (EmpSSN, EmpLname, EmpFname, EmpNumber) 
-              VALUES ('$EmpSSN', '$EmpLname', '$EmpFname', '$EmpNumber')";
+    // Check if EmpSSN already exists in AdminEmp
+    $checkQueryAdminEmp = "SELECT * FROM AdminEmp WHERE EmpSSN = '$EmpSSN'";
+    $checkResultAdminEmp = $mysqli->query($checkQueryAdminEmp);
 
-    if ($mysqli->query($query) === TRUE) {
-        // Clear form fields after successful insertion
-        $EmpSSN = $EmpLname = $EmpFname = $EmpNumber = '';
+    // Check if EmpSSN already exists in ApplicationEmp
+    $checkQueryApplicationEmp = "SELECT * FROM ApplicationEmp WHERE EmpSSN = '$EmpSSN'";
+    $checkResultApplicationEmp = $mysqli->query($checkQueryApplicationEmp);
 
-        // Redirect user based on selected role
-        if (isset($_POST["UserRole"])) {
-            $selectedRole = $_POST["UserRole"];
-            switch ($selectedRole) {
-                case 'AdminEmp':
-                    header('Location: AdminEmp.php');
-                    exit();
-                case 'ApplicationEmp':
-                    header('Location: ApplicationEmp.php');
-                    exit();
-                case 'Auditor':
-                    header('Location: Auditor.php');
-                    exit();
-                case 'ComplianceAgent':
-                    header('Location: ComplianceAgent.php');
-                    exit();
-                case 'DataEntryEmp':
-                    header('Location: DataEntryEmp.php');
-                    exit();
-                case 'Inspector':
-                    header('Location: Inspector.php');
-                    exit();
-            }
+    // Check if EmpSSN already exists in Auditor
+    $checkQueryAuditor = "SELECT * FROM Auditor WHERE EmpSSN = '$EmpSSN'";
+    $checkResultAuditor = $mysqli->query($checkQueryAuditor);
+
+    // Check if EmpSSN already exists in ComplianceAgent
+    $checkQueryComplianceAgent = "SELECT * FROM ComplianceAgent WHERE EmpSSN = '$EmpSSN'";
+    $checkResultComplianceAgent = $mysqli->query($checkQueryComplianceAgent);
+
+    // Check if EmpSSN already exists in Inspector
+    $checkQueryInspector = "SELECT * FROM Inspector WHERE EmpSSN = '$EmpSSN'";
+    $checkResultInspector = $mysqli->query($checkQueryInspector);
+
+    // Check if EmpSSN already exists in DataEntryEmp
+    $checkQueryDataEntryEmp = "SELECT * FROM DataEntryEmp WHERE EmpSSN = '$EmpSSN'";
+    $checkResultDataEntryEmp = $mysqli->query($checkQueryDataEntryEmp);
+
+    // If EmpSSN is not found in any of the tables, insert data
+    if (
+        $checkResultAdminEmp->num_rows === 0 &&
+        $checkResultApplicationEmp->num_rows === 0 &&
+        $checkResultAuditor->num_rows === 0 &&
+        $checkResultComplianceAgent->num_rows === 0 &&
+        $checkResultInspector->num_rows === 0 &&
+        $checkResultDataEntryEmp->num_rows === 0
+    ) {
+        // Insert data into the Employee table
+        $query = "INSERT INTO Employee (EmpSSN, EmpLname, EmpFname, EmpNumber) 
+                  VALUES ('$EmpSSN', '$EmpLname', '$EmpFname', '$EmpNumber')";
+
+        if ($mysqli->query($query) === TRUE) {
+            echo "Record inserted successfully";
+
+            // Clear form fields after successful insertion
+            $EmpSSN = $EmpLname = $EmpFname = $EmpNumber = '';
+        } else {
+            echo "Error: " . $query . "<br>" . $mysqli->error;
         }
     } else {
-        echo "Error: " . $query . "<br>" . $mysqli->error;
+        // Display error message if EmpSSN already exists
+        echo "Error: SSN '$EmpSSN' is already used. Please try a different one.";
     }
 }
 

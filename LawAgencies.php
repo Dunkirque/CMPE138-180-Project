@@ -1,48 +1,63 @@
 <?php
-//NEED TO CHECK OVER,using as template for all subclasses
-//of ExternalAgency
-//For Law Agencies, need to delete variables except EAName
-//Since LawAgencies dont have own attribtue
-//NEED to add the checking for distinction in all subclasses
 // Include the database connection file
 require_once('db_connect.php');
 
 // Initialize variables
-$CAGECode = '';
 $EAName = '';
 
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Retrieve form data (sanitize input as needed)
-    $CAGECode = mysqli_real_escape_string($mysqli, $_POST["CAGECode"]);
     $EAName = mysqli_real_escape_string($mysqli, $_POST["EAName"]);
 
-    // Insert data into the GovAgencies table
-    $query = "INSERT INTO GovAgencies (CAGECode, EAName) 
-              VALUES ('$CAGECode', '$EAName')";
+    // Check if EAName already exists in GovAgencies
+    $checkQueryGovAgencies = "SELECT * FROM GovAgencies WHERE EAName = '$EAName'";
+    $checkResultGovAgencies = $mysqli->query($checkQueryGovAgencies);
 
-    if ($mysqli->query($query) === TRUE) {
-        echo "Record inserted successfully";
+    // Check if EAName already exists in LawAgencies
+    $checkQueryLawAgencies = "SELECT * FROM LawAgencies WHERE EAName = '$EAName'";
+    $checkResultLawAgencies = $mysqli->query($checkQueryLawAgencies);
 
-        // Clear form fields after successful insertion
-        $CAGECode = $EAName = '';
+    // Check if EAName already exists in VehicleManu
+    $checkQueryVehicleManu = "SELECT * FROM VehicleManu WHERE EAName = '$EAName'";
+    $checkResultVehicleManu = $mysqli->query($checkQueryVehicleManu);
+
+    // If EAName is not found in any of the tables, insert data into LawAgencies
+    if (
+        $checkResultGovAgencies->num_rows === 0 &&
+        $checkResultLawAgencies->num_rows === 0 &&
+        $checkResultVehicleManu->num_rows === 0
+    ) {
+        // Insert data into the LawAgencies table
+        $query = "INSERT INTO LawAgencies (EAName) 
+                  VALUES ('$EAName')";
+
+        if ($mysqli->query($query) === TRUE) {
+            echo "Record inserted successfully";
+
+            // Clear form fields after successful insertion
+            $EAName = '';
+        } else {
+            echo "Error: " . $query . "<br>" . $mysqli->error;
+        }
     } else {
-        echo "Error: " . $query . "<br>" . $mysqli->error;
+        // Display error message if EAName already exists
+        echo "Error: Agency with name '$EAName' already exists. Please try a different one.";
     }
-}       
+}
 
-// Fetch data from GovAgencies and join with ExternalAgency
-$query = "SELECT GovAgencies.CAGECode, 
-                 ExternalAgency.EAName, ExternalAgency.Type, ExternalAgency.POC, ExternalAgency.AdminInCharge
-          FROM GovAgencies
-          JOIN ExternalAgency ON GovAgencies.EAName = ExternalAgency.EAName";
+// Fetch data from LawAgencies and join with ExternalAgency
+$query = "SELECT LawAgencies.EAName, 
+                 ExternalAgency.EAType, ExternalAgency.POC, ExternalAgency.AdminInCharge
+          FROM LawAgencies
+          JOIN ExternalAgency ON LawAgencies.EAName = ExternalAgency.EAName";
 
 $result = $mysqli->query($query);
 
 // Check if the query was successful
 if ($result) {
     // Fetch all records as an associative array
-    $rowsGovAgencies = $result->fetch_all(MYSQLI_ASSOC);
+    $rowsLawAgencies = $result->fetch_all(MYSQLI_ASSOC);
 } else {
     // Handle the case where the query failed
     echo "Error: " . $mysqli->error;
@@ -58,30 +73,27 @@ $mysqli->close();
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Insert Government Agency Data</title>
+    <title>Insert Law Agency Data</title>
 </head>
 <body>
 
-    <h2>Insert Government Agency Data</h2>
+    <h2>Insert Law Agency Data</h2>
 
     <form method="post" action="">
-        <label for="CAGECode">CAGE Code:</label>
-        <input type="text" name="CAGECode" value="<?php echo $CAGECode; ?>" required><br>
-
-        <label for="EAName">Government Agency Name:</label>
+        <label for="EAName">Law Agency Name:</label>
         <input type="text" name="EAName" value="<?php echo $EAName; ?>" required><br>
 
         <button type="submit">Submit</button>
     </form>
 
-    <h2>Government Agency Data List</h2>
+    <h2>Law Agency Data List</h2>
 
     <ul>
-        <?php if (isset($rowsGovAgencies) && is_array($rowsGovAgencies)): ?>
-            <?php foreach ($rowsGovAgencies as $row): ?>
-                <li><?php echo "CAGE Code: {$row['CAGECode']}, 
-                             Name: {$row['EAName']}, 
-                             Type: {$row['Type']}, 
+        <?php if (isset($rowsLawAgencies) && is_array($rowsLawAgencies)): ?>
+            <?php foreach ($rowsLawAgencies as $row): ?>
+                <li><?php echo "Name: {$row['EAName']}, 
+                             Type: {$row['EAType']},
+                             POC: {$row['POC']},
                              Admin In Charge: {$row['AdminInCharge']}"; ?></li>
             <?php endforeach; ?>
         <?php endif; ?>

@@ -27,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if($checkResult && $checkResult->num_rows > 0)
     {
-        echo "Error: EmpSSN already used in another role.";
+        echo "Error: Employee SSN already used in another role.";
     } else {
         // Insert data into the ComplianceAgent table
         $insertQuery = "INSERT INTO ComplianceAgent (EmpSSN) 

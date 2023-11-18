@@ -1,7 +1,4 @@
 <?php
-//NEED TO CHECK OVER,using as template for all subclasses
-//of ExternalAgency
-//NEED to add the checking for distinction in all subclasses
 // Include the database connection file
 require_once('db_connect.php');
 
@@ -15,23 +12,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $CAGECode = mysqli_real_escape_string($mysqli, $_POST["CAGECode"]);
     $EAName = mysqli_real_escape_string($mysqli, $_POST["EAName"]);
 
-    // Insert data into the GovAgencies table
-    $query = "INSERT INTO GovAgencies (CAGECode, EAName) 
-              VALUES ('$CAGECode', '$EAName')";
+    // Check if EAName already exists in GovAgencies
+    $checkQueryGov = "SELECT * FROM GovAgencies WHERE EAName = '$EAName'";
+    $checkResultGov = $mysqli->query($checkQueryGov);
 
-    if ($mysqli->query($query) === TRUE) {
-        echo "Record inserted successfully";
+    // Check if EAName already exists in LawAgencies
+    $checkQueryLaw = "SELECT * FROM LawAgencies WHERE EAName = '$EAName'";
+    $checkResultLaw = $mysqli->query($checkQueryLaw);
 
-        // Clear form fields after successful insertion
-        $CAGECode = $EAName = '';
+    // Check if EAName already exists in VehicleManu
+    $checkQueryVehicle = "SELECT * FROM VehicleManu WHERE EAName = '$EAName'";
+    $checkResultVehicle = $mysqli->query($checkQueryVehicle);
+
+    // If EAName is not found in any of the tables, insert data
+    if ($checkResultGov->num_rows === 0 && $checkResultLaw->num_rows === 0 && $checkResultVehicle->num_rows === 0) {
+        // Insert data into the GovAgencies table
+        $query = "INSERT INTO GovAgencies (CAGECode, EAName) 
+                  VALUES ('$CAGECode', '$EAName')";
+
+        if ($mysqli->query($query) === TRUE) {
+            echo "Record inserted successfully";
+
+            // Clear form fields after successful insertion
+            $CAGECode = $EAName = '';
+        } else {
+            echo "Error: " . $query . "<br>" . $mysqli->error;
+        }
     } else {
-        echo "Error: " . $query . "<br>" . $mysqli->error;
+        // Display error message if EAName already exists
+        echo "Error: EAName '$EAName' is already used. Please try a different one.";
     }
-}       
+}
 
 // Fetch data from GovAgencies and join with ExternalAgency
 $query = "SELECT GovAgencies.CAGECode, 
-                 ExternalAgency.EAName, ExternalAgency.Type, ExternalAgency.POC, ExternalAgency.AdminInCharge
+                 ExternalAgency.EAName, ExternalAgency.EAType, ExternalAgency.POC, ExternalAgency.AdminInCharge
           FROM GovAgencies
           JOIN ExternalAgency ON GovAgencies.EAName = ExternalAgency.EAName";
 
@@ -79,7 +94,8 @@ $mysqli->close();
             <?php foreach ($rowsGovAgencies as $row): ?>
                 <li><?php echo "CAGE Code: {$row['CAGECode']}, 
                              Name: {$row['EAName']}, 
-                             Type: {$row['Type']}, 
+                             Type: {$row['EAType']}, 
+                             POC: {$row['POC']},
                              Admin In Charge: {$row['AdminInCharge']}"; ?></li>
             <?php endforeach; ?>
         <?php endif; ?>

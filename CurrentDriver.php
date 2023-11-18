@@ -16,19 +16,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $DLExpDate = mysqli_real_escape_string($mysqli, $_POST["DLExpDate"]);
     $PersonSSN = mysqli_real_escape_string($mysqli, $_POST["PersonSSN"]);
 
-    // Insert data into the CurrentDriver table
-    $query = "INSERT INTO CurrentDriver (DLNumber, InsurancePolicyNumber, DLExpDate, PersonSSN) 
-              VALUES ('$DLNumber', '$InsurancePolicyNumber', '$DLExpDate', '$PersonSSN')";
+    // Check if PersonSSN already exists in LicenseRequestor
+    $checkQueryLicense = "SELECT * FROM LicenseRequestor WHERE PersonSSN = '$PersonSSN'";
+    $checkResultLicense = $mysqli->query($checkQueryLicense);
 
-    if ($mysqli->query($query) === TRUE) {
-        echo "Record inserted successfully";
+    // Check if PersonSSN already exists in CurrentDriver
+    $checkQueryCurrentDriver = "SELECT * FROM CurrentDriver WHERE PersonSSN = '$PersonSSN'";
+    $checkResultCurrentDriver = $mysqli->query($checkQueryCurrentDriver);
 
-        // Clear form fields after successful insertion
-        $DLNumber = $InsurancePolicyNumber = $DLExpDate = $PersonSSN = '';
+    // Check if PersonSSN already exists in VehicleRegRequestor
+    $checkQueryVehicleRegRequestor = "SELECT * FROM VehicleRegRequestor WHERE PersonSSN = '$PersonSSN'";
+    $checkResultVehicleRegRequestor = $mysqli->query($checkQueryVehicleRegRequestor);
+
+    // If PersonSSN is not found in any of the tables, insert data
+    if (
+        $checkResultLicense->num_rows === 0 &&
+        $checkResultCurrentDriver->num_rows === 0 &&
+        $checkResultVehicleRegRequestor->num_rows === 0
+    ) {
+        // Insert data into the CurrentDriver table
+        $query = "INSERT INTO CurrentDriver (DLNumber, InsurancePolicyNumber, DLExpDate, PersonSSN) 
+                  VALUES ('$DLNumber', '$InsurancePolicyNumber', '$DLExpDate', '$PersonSSN')";
+
+        if ($mysqli->query($query) === TRUE) {
+            echo "Record inserted successfully";
+
+            // Clear form fields after successful insertion
+            $DLNumber = $InsurancePolicyNumber = $DLExpDate = $PersonSSN = '';
+        } else {
+            echo "Error: " . $query . "<br>" . $mysqli->error;
+        }
     } else {
-        echo "Error: " . $query . "<br>" . $mysqli->error;
+        // Display error message if PersonSSN already exists
+        echo "Error: SSN '$PersonSSN' is already used. Please try a different one.";
     }
-}       
+}
 
 // Fetch data from CurrentDriver and join with Person
 $query = "SELECT CurrentDriver.DLNumber, CurrentDriver.InsurancePolicyNumber, CurrentDriver.DLExpDate, 

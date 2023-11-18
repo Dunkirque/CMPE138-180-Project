@@ -1,7 +1,4 @@
 <?php
-//NEED TO CHECK OVER,using as template for all subclasses
-//of ExternalAgency
-//NEED to add the checking for distinction in all subclasses
 // Include the database connection file
 require_once('db_connect.php');
 
@@ -15,23 +12,45 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $VehicleManuCode = mysqli_real_escape_string($mysqli, $_POST["VehicleManuCode"]);
     $EAName = mysqli_real_escape_string($mysqli, $_POST["EAName"]);
 
-    // Insert data into the VehicleManu table
-    $query = "INSERT INTO VehicleManu (VehicleManuCode, EAName) 
-              VALUES ('$VehicleManuCode', '$EAName')";
+    // Check if EAName already exists in GovAgencies
+    $checkQueryGovAgencies = "SELECT * FROM GovAgencies WHERE EAName = '$EAName'";
+    $checkResultGovAgencies = $mysqli->query($checkQueryGovAgencies);
 
-    if ($mysqli->query($query) === TRUE) {
-        echo "Record inserted successfully";
+    // Check if EAName already exists in LawAgencies
+    $checkQueryLawAgencies = "SELECT * FROM LawAgencies WHERE EAName = '$EAName'";
+    $checkResultLawAgencies = $mysqli->query($checkQueryLawAgencies);
 
-        // Clear form fields after successful insertion
-        $VehicleManuCode = $EAName = '';
+    // Check if EAName already exists in VehicleManu
+    $checkQueryVehicleManu = "SELECT * FROM VehicleManu WHERE EAName = '$EAName'";
+    $checkResultVehicleManu = $mysqli->query($checkQueryVehicleManu);
+
+    // If EAName is not found in any of the tables, insert data into VehicleManu
+    if (
+        $checkResultGovAgencies->num_rows === 0 &&
+        $checkResultLawAgencies->num_rows === 0 &&
+        $checkResultVehicleManu->num_rows === 0
+    ) {
+        // Insert data into the VehicleManu table
+        $query = "INSERT INTO VehicleManu (VehicleManuCode, EAName) 
+                  VALUES ('$VehicleManuCode', '$EAName')";
+
+        if ($mysqli->query($query) === TRUE) {
+            echo "Record inserted successfully";
+
+            // Clear form fields after successful insertion
+            $VehicleManuCode = $EAName = '';
+        } else {
+            echo "Error: " . $query . "<br>" . $mysqli->error;
+        }
     } else {
-        echo "Error: " . $query . "<br>" . $mysqli->error;
+        // Display error message if EAName already exists
+        echo "Error: Agency with name '$EAName' already exists. Please try a different one.";
     }
-}       
+}
 
 // Fetch data from VehicleManu and join with ExternalAgency
-$query = "SELECT VehicleManu.CAGECode, 
-                 ExternalAgency.EAName, ExternalAgency.Type, ExternalAgency.POC, ExternalAgency.AdminInCharge
+$query = "SELECT VehicleManu.VehicleManuCode, 
+                 ExternalAgency.EAName, ExternalAgency.EAType, ExternalAgency.POC, ExternalAgency.AdminInCharge
           FROM VehicleManu
           JOIN ExternalAgency ON VehicleManu.EAName = ExternalAgency.EAName";
 
@@ -79,7 +98,8 @@ $mysqli->close();
             <?php foreach ($rowsVehicleManu as $row): ?>
                 <li><?php echo "Vehicle Manufacturer Code: {$row['VehicleManuCode']}, 
                              Name: {$row['EAName']}, 
-                             Type: {$row['Type']}, 
+                             Type: {$row['EAType']},
+                             POC: {$row['POC']}, 
                              Admin In Charge: {$row['AdminInCharge']}"; ?></li>
             <?php endforeach; ?>
         <?php endif; ?>

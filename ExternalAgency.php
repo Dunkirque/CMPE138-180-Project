@@ -3,43 +3,61 @@
 require_once('db_connect.php');
 
 // Initialize variables
-$EAName = $Type = $POC = $AdminInCharge = '';
+$EAName = $EAType = $POC = $AdminInCharge = '';
 
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Retrieve form data (sanitize input as needed)
     $EAName = mysqli_real_escape_string($mysqli, $_POST["EAName"]);
-    $Type = mysqli_real_escape_string($mysqli, $_POST["Type"]);
+    $EAType = mysqli_real_escape_string($mysqli, $_POST["EAType"]);
     $POC = mysqli_real_escape_string($mysqli, $_POST["POC"]);
     $AdminInCharge = mysqli_real_escape_string($mysqli, $_POST["AdminInCharge"]);
 
-    // Insert data into the database
-    $query = "INSERT INTO ExternalAgency (EAName, Type, POC, AdminInCharge) 
-              VALUES ('$EAName', '$Type', '$POC', '$AdminInCharge')";
+    // Check if EAName already exists in GovAgencies
+    $checkQueryGov = "SELECT * FROM GovAgencies WHERE EAName = '$EAName'";
+    $checkResultGov = $mysqli->query($checkQueryGov);
 
-    if ($mysqli->query($query) === TRUE) {
-        echo "Record inserted successfully";
+    // Check if EAName already exists in LawAgencies
+    $checkQueryLaw = "SELECT * FROM LawAgencies WHERE EAName = '$EAName'";
+    $checkResultLaw = $mysqli->query($checkQueryLaw);
 
-        // Clear form fields after successful insertion
-        $EAName = $Type = $POC = $AdminInCharge = '';
+    // Check if EAName already exists in VehicleManu
+    $checkQueryVehicle = "SELECT * FROM VehicleManu WHERE EAName = '$EAName'";
+    $checkResultVehicle = $mysqli->query($checkQueryVehicle);
 
-        // Redirect based on selected role
-        if (isset($_POST["SubmitRole"])) {
-            $selectedRole = $_POST["SubmitRole"];
-            switch ($selectedRole) {
-                case 'GovAgencies':
-                    header("Location: GovAgencies.php");
-                    exit();
-                case 'LawAgencies':
-                    header("Location: LawAgencies.php");
-                    exit();
-                case 'VehicleManu':
-                    header("Location: VehicleManu.php");
-                    exit();
+    // If EAName is not found in any of the tables, insert data
+    if ($checkResultGov->num_rows === 0 && $checkResultLaw->num_rows === 0 && $checkResultVehicle->num_rows === 0) {
+        // Insert data into the ExternalAgency table
+        $query = "INSERT INTO ExternalAgency (EAName, EAType, POC, AdminInCharge) 
+                  VALUES ('$EAName', '$EAType', '$POC', '$AdminInCharge')";
+
+        if ($mysqli->query($query) === TRUE) {
+            echo "Record inserted successfully";
+
+            // Clear form fields after successful insertion
+            $EAName = $EAType = $POC = $AdminInCharge = '';
+
+            // Redirect based on selected role
+            if (isset($_POST["SubmitRole"])) {
+                $selectedRole = $_POST["SubmitRole"];
+                switch ($selectedRole) {
+                    case 'GovAgencies':
+                        header("Location: GovAgencies.php");
+                        exit();
+                    case 'LawAgencies':
+                        header("Location: LawAgencies.php");
+                        exit();
+                    case 'VehicleManu':
+                        header("Location: VehicleManu.php");
+                        exit();
+                }
             }
+        } else {
+            echo "Error: " . $query . "<br>" . $mysqli->error;
         }
     } else {
-        echo "Error: " . $query . "<br>" . $mysqli->error;
+        // Display error message if EAName already exists
+        echo "Error: EAName '$EAName' is already used. Please try a different one.";
     }
 }
 
@@ -67,8 +85,8 @@ $mysqli->close();
         <label for="EAName">External Agency Name:</label>
         <input type="text" name="EAName" value="<?php echo $EAName; ?>" required><br>
 
-        <label for="Type">Type:</label>
-        <input type="text" name="Type" value="<?php echo $Type; ?>" required><br>
+        <label for="EAType">Type:</label>
+        <input type="text" name="EAType" value="<?php echo $EAType; ?>" required><br>
 
         <label for="POC">Point of Contact:</label>
         <input type="text" name="POC" value="<?php echo $POC; ?>" required><br>
@@ -91,7 +109,7 @@ $mysqli->close();
     <ul>
         <?php if (isset($rowsExternalAgency) && is_array($rowsExternalAgency)): ?>
             <?php foreach ($rowsExternalAgency as $row): ?>
-                <li><?php echo "External Agency: {$row['EAName']} - Type: {$row['Type']}, POC: {$row['POC']}, Admin In Charge: {$row['AdminInCharge']}"; ?></li>
+                <li><?php echo "External Agency: {$row['EAName']} - Type: {$row['EAType']}, POC: {$row['POC']}, Admin In Charge: {$row['AdminInCharge']}"; ?></li>
             <?php endforeach; ?>
         <?php endif; ?>
     </ul>
@@ -104,6 +122,18 @@ $mysqli->close();
     </a>
     <a href="Employee.php">
         <button type="button">Go to Employee Data</button>
+    </a>
+    <a href="updateExternalAgency.php">
+        <button type="button">Update External Agency Data</button>
+    </a>
+    <a href="updateGovAgencies.php">
+        <button type="button">Update Government Agency Data</button>
+    </a>
+    <a href="updateLawAgencies.php">
+        <button type="button">Update Law Agency Data</button>
+    </a>
+    <a href="updateVehicleManu.php">
+        <button type="button">Update Vehicle Manufacturer Data</button>
     </a>
 </body>
 </html>

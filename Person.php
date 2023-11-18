@@ -13,36 +13,58 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $PersonSSN = mysqli_real_escape_string($mysqli, $_POST["PersonSSN"]);
     $PersonDOB = mysqli_real_escape_string($mysqli, $_POST["PersonDOB"]);
 
-    // Insert data into the database
-    $query = "INSERT INTO Person (PersonLname, PersonFname, PersonSSN, PersonDOB) 
-              VALUES ('$PersonLname', '$PersonFname', '$PersonSSN', '$PersonDOB')";
+    // Check if PersonSSN already exists in LicenseRequestor
+    $checkQueryLicense = "SELECT * FROM LicenseRequestor WHERE PersonSSN = '$PersonSSN'";
+    $checkResultLicense = $mysqli->query($checkQueryLicense);
 
-    if ($mysqli->query($query) === TRUE) {
-        // Clear form fields after successful insertion
-        $PersonLname = $PersonFname = $PersonSSN = $PersonDOB = '';
+    // Check if PersonSSN already exists in CurrentDriver
+    $checkQueryCurrentDriver = "SELECT * FROM CurrentDriver WHERE PersonSSN = '$PersonSSN'";
+    $checkResultCurrentDriver = $mysqli->query($checkQueryCurrentDriver);
 
-        // Redirect user based on selected role
-        if (isset($_POST["UserRole"])) {
-            $selectedRole = $_POST["UserRole"];
-            switch ($selectedRole) {
-                case 'LicenseRequestor':
-                    header('Location: LicenseRequestor.php');
-                    exit();
-                case 'CurrentDriver':
-                    header('Location: CurrentDriver.php');
-                    exit();
-                case 'VehicleRegistrationRequestor':
-                    header('Location: VehicleRegistrationRequestor.php');
-                    exit();
-                // Add more cases if needed for additional roles
+    // Check if PersonSSN already exists in VehicleRegRequestor
+    $checkQueryVehicleRegRequestor = "SELECT * FROM VehicleRegRequestor WHERE PersonSSN = '$PersonSSN'";
+    $checkResultVehicleRegRequestor = $mysqli->query($checkQueryVehicleRegRequestor);
+
+    // If PersonSSN is not found in any of the tables, insert data
+    if (
+        $checkResultLicense->num_rows === 0 &&
+        $checkResultCurrentDriver->num_rows === 0 &&
+        $checkResultVehicleRegRequestor->num_rows === 0
+    ) {
+        // Insert data into the Person table
+        $query = "INSERT INTO Person (PersonLname, PersonFname, PersonSSN, PersonDOB) 
+                  VALUES ('$PersonLname', '$PersonFname', '$PersonSSN', '$PersonDOB')";
+
+        if ($mysqli->query($query) === TRUE) {
+            // Clear form fields after successful insertion
+            $PersonLname = $PersonFname = $PersonSSN = $PersonDOB = '';
+
+            // Redirect user based on selected role
+            if (isset($_POST["UserRole"])) {
+                $selectedRole = $_POST["UserRole"];
+                switch ($selectedRole) {
+                    case 'LicenseRequestor':
+                        header('Location: LicenseRequestor.php');
+                        exit();
+                    case 'CurrentDriver':
+                        header('Location: CurrentDriver.php');
+                        exit();
+                    case 'VehicleRegistrationRequestor':
+                        header('Location: VehicleRegistrationRequestor.php');
+                        exit();
+                    // Add more cases if needed for additional roles
+                }
             }
+        } else {
+            echo "Error: " . $query . "<br>" . $mysqli->error;
         }
     } else {
-        echo "Error: " . $query . "<br>" . $mysqli->error;
+        // Display error message if PersonSSN already exists
+        echo "Error: SSN '$PersonSSN' is already used. Please try a different one.";
     }
 }
 
-// Fetch all records from the database
+// Fetch all records from the Person table
 $result = $mysqli->query("SELECT * FROM Person");
 $rows = $result->fetch_all(MYSQLI_ASSOC);
 
@@ -106,6 +128,18 @@ $mysqli->close();
     </a>
     <a href="ExternalAgency.php">
         <button type="button">Go to External Agency Data</button>
+    </a>
+    <a href="updatePerson.php">
+        <button type="button">Update Person Data</button>
+    </a>
+    <a href="updateLicenseRequestor.php">
+        <button type="button">Update License Requestor Data</button>
+    </a>
+    <a href="updateCurrentDriver.php">
+        <button type="button">Update Current Driver Data</button>
+    </a>
+    <a href="updateVehicleRegistrationRequestor.php">
+        <button type="button">Update Vehicle Registration Requestor Data</button>
     </a>
 </body>
 </html>
