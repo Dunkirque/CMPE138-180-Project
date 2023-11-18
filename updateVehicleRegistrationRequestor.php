@@ -3,57 +3,64 @@
 require_once('db_connect.php');
 
 // Initialize variables
-$PersonSSN = $PersonLname = $PersonFname = $PersonDOB = $VehicleNumber = '';
-$action = isset($_GET['action']) ? $_GET['action'] : '';
-
-// If the action is 'update' and SSN is provided, fetch the data
-if ($action == 'update' && isset($_GET['ssn'])) {
-    $PersonSSNToUpdate = mysqli_real_escape_string($mysqli, $_GET['ssn']);
-    $VehicleNumberToUpdate = mysqli_real_escape_string($mysqli, $_GET['vehicleNumber']);
-    $query = "SELECT * FROM VehicleRegRequestor
-              JOIN Person ON VehicleRegRequestor.PersonSSN = Person.PersonSSN
-              WHERE VehicleRegRequestor.PersonSSN = '$PersonSSNToUpdate' 
-                AND VehicleRegRequestor.VehicleNumber = '$VehicleNumberToUpdate'";
-    $result = $mysqli->query($query);
-
-    if ($result && $result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        $PersonSSN = $row['PersonSSN'];
-        $PersonLname = $row['PersonLname'];
-        $PersonFname = $row['PersonFname'];
-        $PersonDOB = $row['PersonDOB'];
-        $VehicleNumber = $row['VehicleNumber'];
-    } else {
-        echo "Error: Record not found.";
-        exit();
-    }
-}
+$oldPersonSSN = '';
+$newPersonSSN = '';
+$newVehicleNumber = '';
+$newPersonFname = '';
+$newPersonLname = '';
+$newPersonDOB = '';
 
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Retrieve form data (sanitize input as needed)
-    $PersonSSN = mysqli_real_escape_string($mysqli, $_POST["PersonSSN"]);
-    $PersonLname = mysqli_real_escape_string($mysqli, $_POST["PersonLname"]);
-    $PersonFname = mysqli_real_escape_string($mysqli, $_POST["PersonFname"]);
-    $PersonDOB = mysqli_real_escape_string($mysqli, $_POST["PersonDOB"]);
-    $VehicleNumber = mysqli_real_escape_string($mysqli, $_POST["VehicleNumber"]);
+    $oldPersonSSN = mysqli_real_escape_string($mysqli, $_POST["oldPersonSSN"]);
+    $newPersonSSN = mysqli_real_escape_string($mysqli, $_POST["newPersonSSN"]);
+    $newVehicleNumber = mysqli_real_escape_string($mysqli, $_POST["newVehicleNumber"]);
+    $newPersonFname = mysqli_real_escape_string($mysqli, $_POST["newPersonFname"]);
+    $newPersonLname = mysqli_real_escape_string($mysqli, $_POST["newPersonLname"]);
+    $newPersonDOB = mysqli_real_escape_string($mysqli, $_POST["newPersonDOB"]);
 
-    // Update data in the VehicleRegRequestor and Person tables
-    $updateQueryVehicle = "UPDATE VehicleRegRequestor 
-                           SET VehicleNumber = '$VehicleNumber'
-                           WHERE PersonSSN = '$PersonSSN'";
+    // Check if the old PersonSSN exists in the VehicleRegRequestor table
+    $checkQueryVehicleRegRequestor = "SELECT * FROM VehicleRegRequestor WHERE PersonSSN = '$oldPersonSSN'";
+    $checkResultVehicleRegRequestor = $mysqli->query($checkQueryVehicleRegRequestor);
 
-    $updateQueryPerson = "UPDATE Person 
-                          SET PersonLname = '$PersonLname', PersonFname = '$PersonFname', PersonDOB = '$PersonDOB'
-                          WHERE PersonSSN = '$PersonSSN'";
+    if ($checkResultVehicleRegRequestor->num_rows > 0) {
+        // Check if the new PersonSSN already exists in the Person table
+        $checkQueryNewPersonSSN = "SELECT * FROM Person WHERE PersonSSN = '$newPersonSSN'";
+        $checkResultNewPersonSSN = $mysqli->query($checkQueryNewPersonSSN);
 
-    if (
-        $mysqli->query($updateQueryVehicle) === TRUE &&
-        $mysqli->query($updateQueryPerson) === TRUE
-    ) {
-        echo "Record updated successfully";
+        if ($checkResultNewPersonSSN->num_rows === 0) {
+            // Update data in the VehicleRegRequestor table
+            $updateQueryVehicleRegRequestor = "UPDATE VehicleRegRequestor 
+                                               SET PersonSSN = '$newPersonSSN', 
+                                                   VehicleNumber = '$newVehicleNumber' 
+                                               WHERE PersonSSN = '$oldPersonSSN'";
+            if ($mysqli->query($updateQueryVehicleRegRequestor) === TRUE) {
+                // Update data in the Person table
+                $updateQueryPerson = "UPDATE Person 
+                                      SET PersonSSN = '$newPersonSSN', 
+                                          PersonFname = '$newPersonFname', 
+                                          PersonLname = '$newPersonLname', 
+                                          PersonDOB = '$newPersonDOB' 
+                                      WHERE PersonSSN = '$oldPersonSSN'";
+                if ($mysqli->query($updateQueryPerson) === TRUE) {
+                    echo "Records updated successfully";
+
+                    // Clear form fields after successful update
+                    $oldPersonSSN = $newPersonSSN = $newVehicleNumber = $newPersonFname = $newPersonLname = $newPersonDOB = '';
+                } else {
+                    echo "Error updating records in Person table: " . $mysqli->error;
+                }
+            } else {
+                echo "Error updating records in VehicleRegRequestor table: " . $mysqli->error;
+            }
+        } else {
+            // Display error message if new PersonSSN already exists
+            echo "Error: New Person SSN '$newPersonSSN' already exists. Please choose a different one.";
+        }
     } else {
-        echo "Error updating record: " . $mysqli->error;
+        // Display error message if old PersonSSN does not exist in VehicleRegRequestor table
+        echo "Error: Person with SSN '$oldPersonSSN' does not exist in VehicleRegRequestor. Please enter an existing Person SSN.";
     }
 }
 
@@ -67,34 +74,36 @@ $mysqli->close();
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Update VehicleRegRequestor Data</title>
+    <title>Update Vehicle Registration Requestor Data</title>
 </head>
 <body>
 
     <h2>Update Vehicle Registration Requestor Data</h2>
 
     <form method="post" action="">
-        <label for="PersonSSN">Vehicle Registration Requestor SSN to Update:</label>
-        <input type="text" name="PersonSSN" value="<?php echo $PersonSSN; ?>" required><br>
+        <label for="oldPersonSSN">Enter Existing Person SSN to Update:</label>
+        <input type="text" name="oldPersonSSN" value="<?php echo $oldPersonSSN; ?>" required><br>
 
-        <label for="VehicleNumber">Vehicle Number:</label>
-        <input type="text" name="VehicleNumber" value="<?php echo $VehicleNumber; ?>" required><br>
+        <label for="newPersonSSN">Enter New Person SSN:</label>
+        <input type="text" name="newPersonSSN" value="<?php echo $newPersonSSN; ?>" required><br>
 
-        <label for="PersonLname">Last Name:</label>
-        <input type="text" name="PersonLname" value="<?php echo $PersonLname; ?>" required><br>
+        <label for="newVehicleNumber">Enter New Vehicle Number:</label>
+        <input type="text" name="newVehicleNumber" value="<?php echo $newVehicleNumber; ?>" required><br>
 
-        <label for="PersonFname">First Name:</label>
-        <input type="text" name="PersonFname" value="<?php echo $PersonFname; ?>" required><br>
+        <label for="newPersonFname">Enter New Person First Name:</label>
+        <input type="text" name="newPersonFname" value="<?php echo $newPersonFname; ?>" required><br>
 
-        <label for="PersonDOB">Date of Birth:</label>
-        <input type="date" name="PersonDOB" value="<?php echo $PersonDOB; ?>" required><br>
+        <label for="newPersonLname">Enter New Person Last Name:</label>
+        <input type="text" name="newPersonLname" value="<?php echo $newPersonLname; ?>" required><br>
 
-        <button type="submit">Update</button>
+        <label for="newPersonDOB">Enter New Person Date of Birth:</label>
+        <input type="text" name="newPersonDOB" value="<?php echo $newPersonDOB; ?>" required><br>
+
+        <button type="submit">Update Records</button>
     </form>
 
-    <a href="Person.php">
-        <button type="button">Go back to Person Data</button>
+    <a href="VehicleRegRequestor.php">
+        <button type="button">Go back to Vehicle Registration Requestor Data</button>
     </a>
-
 </body>
 </html>

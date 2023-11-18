@@ -3,49 +3,59 @@
 require_once('db_connect.php');
 
 // Initialize variables
-$EAName = $EAType = $POC = $AdminInCharge = '';
-$action = isset($_GET['action']) ? $_GET['action'] : '';
-
-// If the action is 'update' and EAName is provided, fetch the data
-if ($action == 'update' && isset($_GET['eaName'])) {
-    $EANameToUpdate = mysqli_real_escape_string($mysqli, $_GET['eaName']);
-    $query = "SELECT * FROM LawAgencies
-              JOIN ExternalAgency ON LawAgencies.
-              WHERE EAName = '$EANameToUpdate'";
-    $result = $mysqli->query($query);
-
-    if ($result && $result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        $EAName = $row['EAName'];
-        $EAType = $row['EAType'];
-        $POC = $row['POC'];
-        $AdminInCharge = $row['AdminInCharge'];
-    } else {
-        echo "Error: Record not found.";
-        exit();
-    }
-}
+$oldEAName = '';
+$newEAName = '';
+$newEAType = '';
+$newPOC = '';
+$newAdminInCharge = '';
 
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Retrieve form data (sanitize input as needed)
-    $EAName = mysqli_real_escape_string($mysqli, $_POST["EAName"]);
-    $EAType = mysqli_real_escape_string($mysqli, $_POST["EAType"]);
-    $POC = mysqli_real_escape_string($mysqli, $_POST["POC"]);
-    $AdminInCharge = mysqli_real_escape_string($mysqli, $_POST["AdminInCharge"]);
+    $oldEAName = mysqli_real_escape_string($mysqli, $_POST["oldEAName"]);
+    $newEAName = mysqli_real_escape_string($mysqli, $_POST["newEAName"]);
+    $newEAType = mysqli_real_escape_string($mysqli, $_POST["newEAType"]);
+    $newPOC = mysqli_real_escape_string($mysqli, $_POST["newPOC"]);
+    $newAdminInCharge = mysqli_real_escape_string($mysqli, $_POST["newAdminInCharge"]);
 
-    // Update data in the LawAgencies table
-    $updateQueryLawAgencies = "UPDATE LawAgencies 
-                               SET EAName = '$EAName'
-                               WHERE EAName = '$EAName'";
-    $updateQuery= "UPDATE ExternalAgency
-                   SET EAType = '$EAType', POC = '$POC', AdminInCharge = '$AdminInCharge'
-                   WHERE EAName='$EAName'";
+    // Check if the old EAName exists in the LawAgencies table
+    $checkQueryLawAgencies = "SELECT * FROM LawAgencies WHERE EAName = '$oldEAName'";
+    $checkResultLawAgencies = $mysqli->query($checkQueryLawAgencies);
 
-    if ($mysqli->query($updateQuery)=== TRUE && $mysqli->query($updateQueryLawAgencies) === TRUE) {
-        echo "Record updated successfully";
+    if ($checkResultLawAgencies->num_rows > 0) {
+        // Check if the new EAName already exists in the ExternalAgency table
+        $checkQueryNewEA = "SELECT * FROM ExternalAgency WHERE EAName = '$newEAName'";
+        $checkResultNewEA = $mysqli->query($checkQueryNewEA);
+
+        if ($checkResultNewEA->num_rows === 0) {
+            // Update data in the LawAgencies table
+            $updateQueryLawAgencies = "UPDATE LawAgencies SET EAName = '$newEAName' WHERE EAName = '$oldEAName'";
+            if ($mysqli->query($updateQueryLawAgencies) === TRUE) {
+                // Update data in the ExternalAgency table
+                $updateQueryExternalAgency = "UPDATE ExternalAgency 
+                                             SET EAName = '$newEAName', 
+                                                 EAType = '$newEAType', 
+                                                 POC = '$newPOC', 
+                                                 AdminInCharge = '$newAdminInCharge' 
+                                             WHERE EAName = '$oldEAName'";
+                if ($mysqli->query($updateQueryExternalAgency) === TRUE) {
+                    echo "Records updated successfully";
+
+                    // Clear form fields after successful update
+                    $oldEAName = $newEAName = $newEAType = $newPOC = $newAdminInCharge = '';
+                } else {
+                    echo "Error updating records in ExternalAgency table: " . $mysqli->error;
+                }
+            } else {
+                echo "Error updating records in LawAgencies table: " . $mysqli->error;
+            }
+        } else {
+            // Display error message if new EAName already exists
+            echo "Error: New Agency Name '$newEAName' already exists. Please choose a different one.";
+        }
     } else {
-        echo "Error updating record: " . $mysqli->error;
+        // Display error message if old EAName does not exist in LawAgencies table
+        echo "Error: Agency with name '$oldEAName' does not exist in LawAgencies. Please enter an existing Law Agency Name.";
     }
 }
 
@@ -53,37 +63,39 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 $mysqli->close();
 ?>
 
-<!DOCEAType html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Update Law Agencies Data</title>
+    <title>Update Law Agency Data</title>
 </head>
 <body>
 
-    <h2>Update Law Agencies Data</h2>
+    <h2>Update Law Agency Data</h2>
 
     <form method="post" action="">
-        <label for="EAName">Law Agency Name to Update:</label>
-        <input type="text" name="EAName" value="<?php echo $EAName; ?>" required><br>
+        <label for="oldEAName">Enter Existing Law Agency Name to Update:</label>
+        <input type="text" name="oldEAName" value="<?php echo $oldEAName; ?>" required><br>
 
-        <label for="EAType">Type:</label>
-        <input type="text" name="EAType" value="<?php echo $EAType; ?>" required><br>
+        <label for="newEAName">Enter New Law Agency Name:</label>
+        <input type="text" name="newEAName" value="<?php echo $newEAName; ?>" required><br>
 
-        <label for="POC">Point of Contact:</label>
-        <input type="text" name="POC" value="<?php echo $POC; ?>" required><br>
+        <label for="newEAType">Enter New Law Agency Type:</label>
+        <input type="text" name="newEAType" value="<?php echo $newEAType; ?>" required><br>
 
-        <label for="AdminInCharge">Admin In Charge:</label>
-        <input type="text" name="AdminInCharge" value="<?php echo $AdminInCharge; ?>" required><br>
+        <label for="newPOC">Enter New Point of Contact:</label>
+        <input type="text" name="newPOC" value="<?php echo $newPOC; ?>" required><br>
 
-        <button type="submit">Update</button>
+        <label for="newAdminInCharge">Enter New Admin In Charge:</label>
+        <input type="text" name="newAdminInCharge" value="<?php echo $newAdminInCharge; ?>" required><br>
+
+        <button type="submit">Update Records</button>
     </form>
 
-    <a href="ExternalAgency.php">
-        <button type="button">Go back to External Agency Data</button>
+    <a href="LawAgencies.php">
+        <button type="button">Go back to Law Agency Data</button>
     </a>
-
 </body>
 </html>

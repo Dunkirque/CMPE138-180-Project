@@ -3,55 +3,64 @@
 require_once('db_connect.php');
 
 // Initialize variables
-$EAName = $EAType = $POC = $AdminInCharge = $VehicleManuCode= '';
-$action = isset($_GET['action']) ? $_GET['action'] : '';
-
-// If the action is 'update' and SSN is provided, fetch the data
-if ($action == 'update' && isset($_GET['eaName'])) {
-    $EANameToUpdate = mysqli_real_escape_string($mysqli, $_GET['eaName']);
-    $VehicleManuCodeToUpdate = mysqli_real_escape_string($mysqli, $_GET['VehicleManuCode']);
-    $query = "SELECT * FROM VehicleManu
-              JOIN ExternalAgency ON VehicleManu.EAName = ExternalAgency.EAName
-              WHERE VehicleManu.EAName = '$EANameToUpdate'";
-    $result = $mysqli->query($query);
-
-    if ($result && $result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        $EAName = $row['EAName'];
-        $EAType = $row['EAType'];
-        $POC = $row['POC'];
-        $AdminInCharge = $row['AdminInCharge'];
-        $VehicleManuCode = $row['VehicleManuCode'];
-       
-    } else {
-        echo "Error: Record not found.";
-        exit();
-    }
-}
+$oldEAName = '';
+$newEAName = '';
+$newVehicleManuCode = '';
+$newEAType = '';
+$newPOC = '';
+$newAdminInCharge = '';
 
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Retrieve form data (sanitize input as needed)
-    $EAName = mysqli_real_escape_string($mysqli, $_POST["EAName"]);
-    $EAType = mysqli_real_escape_string($mysqli, $_POST["EAType"]);
-    $POC = mysqli_real_escape_string($mysqli, $_POST["POC"]);
-    $AdminInCharge = mysqli_real_escape_string($mysqli, $_POST["AdminInCharge"]);
-    $VehicleManuCode = mysqli_real_escape_string($mysqli, $_POST["VehicleManuCode"]);
+    $oldEAName = mysqli_real_escape_string($mysqli, $_POST["oldEAName"]);
+    $newEAName = mysqli_real_escape_string($mysqli, $_POST["newEAName"]);
+    $newVehicleManuCode = mysqli_real_escape_string($mysqli, $_POST["newVehicleManuCode"]);
+    $newEAType = mysqli_real_escape_string($mysqli, $_POST["newEAType"]);
+    $newPOC = mysqli_real_escape_string($mysqli, $_POST["newPOC"]);
+    $newAdminInCharge = mysqli_real_escape_string($mysqli, $_POST["newAdminInCharge"]);
 
+    // Check if the old EAName exists in the VehicleManu table
+    $checkQueryVehicleManu = "SELECT * FROM VehicleManu WHERE EAName = '$oldEAName'";
+    $checkResultVehicleManu = $mysqli->query($checkQueryVehicleManu);
 
-    // Update data in the VehicleManu and ExternalAgency tables
-    $updateQuery = "UPDATE VehicleManu 
-                    SET VehicleManuCode = '$VehicleManuCode'
-                    WHERE EAName = '$EAName'";
+    if ($checkResultVehicleManu->num_rows > 0) {
+        // Check if the new EAName already exists in the ExternalAgency table
+        $checkQueryNewEA = "SELECT * FROM ExternalAgency WHERE EAName = '$newEAName'";
+        $checkResultNewEA = $mysqli->query($checkQueryNewEA);
 
-    $updateQueryExternalAgency = "UPDATE ExternalAgency 
-                          SET EAType = '$EAType', POC = '$POC', AdminInCharge = '$AdminInCharge'
-                          WHERE EAName = '$EAName'";
+        if ($checkResultNewEA->num_rows === 0) {
+            // Update data in the VehicleManu table
+            $updateQueryVehicleManu = "UPDATE VehicleManu 
+                                       SET EAName = '$newEAName', 
+                                           VehicleManuCode = '$newVehicleManuCode' 
+                                       WHERE EAName = '$oldEAName'";
+            if ($mysqli->query($updateQueryVehicleManu) === TRUE) {
+                // Update data in the ExternalAgency table
+                $updateQueryExternalAgency = "UPDATE ExternalAgency 
+                                             SET EAName = '$newEAName', 
+                                                 EAType = '$newEAType', 
+                                                 POC = '$newPOC', 
+                                                 AdminInCharge = '$newAdminInCharge' 
+                                             WHERE EAName = '$oldEAName'";
+                if ($mysqli->query($updateQueryExternalAgency) === TRUE) {
+                    echo "Records updated successfully";
 
-    if ($mysqli->query($updateQuery) === TRUE && $mysqli->query($updateQueryExternalAgency) === TRUE) {
-        echo "Record updated successfully";
+                    // Clear form fields after successful update
+                    $oldEAName = $newEAName = $newVehicleManuCode = $newEAType = $newPOC = $newAdminInCharge = '';
+                } else {
+                    echo "Error updating records in ExternalAgency table: " . $mysqli->error;
+                }
+            } else {
+                echo "Error updating records in VehicleManu table: " . $mysqli->error;
+            }
+        } else {
+            // Display error message if new EAName already exists
+            echo "Error: New Agency Name '$newEAName' already exists. Please choose a different one.";
+        }
     } else {
-        echo "Error updating record: " . $mysqli->error;
+        // Display error message if old EAName does not exist in VehicleManu table
+        echo "Error: Agency with name '$oldEAName' does not exist in VehicleManu. Please enter an existing Vehicle Manufacturer Name.";
     }
 }
 
@@ -72,28 +81,29 @@ $mysqli->close();
     <h2>Update Vehicle Manufacturer Data</h2>
 
     <form method="post" action="">
-        <label for="EAName">Vehicle Manufacturer Name to Update:</label>
-        <input type="text" name="EAName" value="<?php echo $EAName; ?>" required><br>
+        <label for="oldEAName">Enter Existing Vehicle Manufacturer Name to Update:</label>
+        <input type="text" name="oldEAName" value="<?php echo $oldEAName; ?>" required><br>
 
-        <label for="VehicleManuCode">Vehicle Manufacturer Code:</label>
-        <input type="text" name="VehicleManuCode" value="<?php echo $VehicleManuCode; ?>" required><br>
+        <label for="newEAName">Enter New Vehicle Manufacturer Name:</label>
+        <input type="text" name="newEAName" value="<?php echo $newEAName; ?>" required><br>
 
-        <label for="EAType">Type:</label>
-        <input type="text" name="EAType" value="<?php echo $EAType; ?>" required><br>
+        <label for="newVehicleManuCode">Enter New Vehicle Manufacturer Code:</label>
+        <input type="text" name="newVehicleManuCode" value="<?php echo $newVehicleManuCode; ?>" required><br>
 
-        <label for="AdminInCharge">Admin In Charge:</label>
-        <input type="text" name="AdminInCharge" value="<?php echo $AdminInCharge; ?>" required><br>
+        <label for="newEAType">Enter New Manufacturer Type:</label>
+        <input type="text" name="newEAType" value="<?php echo $newEAType; ?>" required><br>
 
-        <label for="POC">POC:</label>
-        <input type="text" name="POC" value="<?php echo $POC; ?>" required><br>
+        <label for="newPOC">Enter New Point of Contact:</label>
+        <input type="text" name="newPOC" value="<?php echo $newPOC; ?>" required><br>
 
+        <label for="newAdminInCharge">Enter New Admin In Charge:</label>
+        <input type="text" name="newAdminInCharge" value="<?php echo $newAdminInCharge; ?>" required><br>
 
-        <button type="submit">Update</button>
+        <button type="submit">Update Records</button>
     </form>
 
-    <a href="ExternalAgency.php">
-        <button type="button">Go back to External Agency Data</button>
+    <a href="VehicleManu.php">
+        <button type="button">Go back to Vehicle Manufacturer Data</button>
     </a>
-
 </body>
 </html>

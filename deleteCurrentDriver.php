@@ -51,8 +51,8 @@ $mysqli->close();
         <button type="submit">Delete Records</button>
     </form>
 
-    <a href="CurrentDriver.php">
-        <button type="button">Go back to Current Driver Data</button>
+    <a href="Person.php">
+        <button type="button">Go back to Person Data</button>
     </a>
 </body>
 </html>

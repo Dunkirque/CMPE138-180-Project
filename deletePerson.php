@@ -65,28 +65,9 @@ $mysqli->close();
         <?php endif; ?>
     </ul>
 
-    <!-- Add links to other pages as needed -->
 
-    <a href="DrivingSchool.php">
-        <button type="button">Go to Driving School Data</button>
-    </a>
-    <a href="Employee.php">
-        <button type="button">Go to Employee Data</button>
-    </a>
-    <a href="ExternalAgency.php">
-        <button type="button">Go to External Agency Data</button>
-    </a>
-    <a href="updatePerson.php">
-        <button type="button">Update Person Data</button>
-    </a>
-    <a href="updateLicenseRequestor.php">
-        <button type="button">Update License Requestor Data</button>
-    </a>
-    <a href="updateCurrentDriver.php">
-        <button type="button">Update Current Driver Data</button>
-    </a>
-    <a href="updateVehicleRegistrationRequestor.php">
-        <button type="button">Update Vehicle Registration Requestor Data</button>
+    <a href="Person.php">
+        <button type="button">Go to Person Data</button>
     </a>
 </body>
 </html>

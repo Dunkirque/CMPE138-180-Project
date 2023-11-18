@@ -79,5 +79,11 @@ $mysqli->close();
     <a href="Employee.php">
         <button type="button">Go to Employee Data</button>
     </a>
+    <a href="updateDrivingSchool.php">
+        <button type="button">Update Driving School Data</button>
+    </a>
+    <a href="deleteDrivingSchool.php">
+        <button type="button">Delete Driving School Data</button>
+    </a>
 </body>
 </html>

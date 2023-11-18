@@ -131,5 +131,47 @@ $mysqli->close();
     <a href="ExternalAgency.php">
         <button type="button">Go to External Agency Data</button>
     </a>
+    <a href="updateEmployee.php">
+        <button type="button">Update Employee Data</button>
+    </a>
+    <a href="updateAdminEmp.php">
+        <button type="button">Update Admin Employee Data</button>
+    </a>
+    <a href="updateApplicationEmp.php">
+        <button type="button">Update Application Employee Data</button>
+    </a>
+    <a href="updateAuditor.php">
+        <button type="button">Update Auditor Employee Data</button>
+    </a>
+    <a href="updateComplianceAgent.php">
+        <button type="button">Update Compliance Agent Employee Data</button>
+    </a>
+    <a href="updateDataEntryEmp.php">
+        <button type="button">Update Data Entry Employee Data</button>
+    </a>
+    <a href="updateInspector.php">
+        <button type="button">Update Inspector Employee Data</button>
+    </a>
+    <a href="deleteEmployee.php">
+        <button type="button">Delete Employee Data</button>
+    </a>
+    <a href="deleteAdminEmp.php">
+        <button type="button">Delete Admin Employee Data</button>
+    </a>
+    <a href="deleteApplicationEmp.php">
+        <button type="button">Delete Application Employee Data</button>
+    </a>
+    <a href="deleteAuditor.php">
+        <button type="button">Delete Auditor Employee Data</button>
+    </a>
+    <a href="deleteComplianceAgent.php">
+        <button type="button">Delete Compliance Agent Employee Data</button>
+    </a>
+    <a href="deleteDataEntryEmp.php">
+        <button type="button">Delete Data Entry Employee Data</button>
+    </a>
+    <a href="deleteInspector.php">
+        <button type="button">Delete Inspector Employee Data</button>
+    </a>
 </body>
 </html>

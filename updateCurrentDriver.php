@@ -3,58 +3,70 @@
 require_once('db_connect.php');
 
 // Initialize variables
-$DLNumber = $InsurancePolicyNumber = $DLExpDate = $PersonSSN = $PersonLname = $PersonFname = $PersonDOB = '';
-$action = isset($_GET['action']) ? $_GET['action'] : '';
-
-// If the action is 'update' and SSN is provided, fetch the data
-if ($action == 'update' && isset($_GET['ssn'])) {
-    $PersonSSNToUpdate = mysqli_real_escape_string($mysqli, $_GET['ssn']);
-    $DLNumberToUpdate = mysqli_real_escape_string($mysqli, $_GET['dlNumber']);
-    $query = "SELECT * FROM CurrentDriver
-              JOIN Person ON CurrentDriver.PersonSSN = Person.PersonSSN
-              WHERE CurrentDriver.PersonSSN = '$PersonSSNToUpdate' 
-                AND CurrentDriver.DLNumber = '$DLNumberToUpdate'";
-    $result = $mysqli->query($query);
-
-    if ($result && $result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        $DLNumber = $row['DLNumber'];
-        $InsurancePolicyNumber = $row['InsurancePolicyNumber'];
-        $DLExpDate = $row['DLExpDate'];
-        $PersonSSN = $row['PersonSSN'];
-        $PersonLname = $row['PersonLname'];
-        $PersonFname = $row['PersonFname'];
-        $PersonDOB = $row['PersonDOB'];
-    } else {
-        echo "Error: Record not found.";
-        exit();
-    }
-}
+$oldPersonSSN = '';
+$newPersonSSN = '';
+$newDLNumber = '';
+$newInsurancePolicyNumber = '';
+$newDLExpDate = '';
+$newPersonFname = '';
+$newPersonLname = '';
+$newPersonDOB = '';
 
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Retrieve form data (sanitize input as needed)
-    $DLNumber = mysqli_real_escape_string($mysqli, $_POST["DLNumber"]);
-    $InsurancePolicyNumber = mysqli_real_escape_string($mysqli, $_POST["InsurancePolicyNumber"]);
-    $DLExpDate = mysqli_real_escape_string($mysqli, $_POST["DLExpDate"]);
-    $PersonSSN = mysqli_real_escape_string($mysqli, $_POST["PersonSSN"]);
-    $PersonLname = mysqli_real_escape_string($mysqli, $_POST["PersonLname"]);
-    $PersonFname = mysqli_real_escape_string($mysqli, $_POST["PersonFname"]);
-    $PersonDOB = mysqli_real_escape_string($mysqli, $_POST["PersonDOB"]);
+    $oldPersonSSN = mysqli_real_escape_string($mysqli, $_POST["oldPersonSSN"]);
+    $newPersonSSN = mysqli_real_escape_string($mysqli, $_POST["newPersonSSN"]);
+    $newDLNumber = mysqli_real_escape_string($mysqli, $_POST["newDLNumber"]);
+    $newInsurancePolicyNumber = mysqli_real_escape_string($mysqli, $_POST["newInsurancePolicyNumber"]);
+    $newDLExpDate = mysqli_real_escape_string($mysqli, $_POST["newDLExpDate"]);
+    $newPersonFname = mysqli_real_escape_string($mysqli, $_POST["newPersonFname"]);
+    $newPersonLname = mysqli_real_escape_string($mysqli, $_POST["newPersonLname"]);
+    $newPersonDOB = mysqli_real_escape_string($mysqli, $_POST["newPersonDOB"]);
 
-    // Update data in the CurrentDriver and Person tables
-    $updateQuery = "UPDATE CurrentDriver 
-                    SET DLNumber = '$DLNumber', InsurancePolicyNumber = '$InsurancePolicyNumber', DLExpDate = '$DLExpDate'
-                    WHERE PersonSSN = '$PersonSSN'";
+    // Check if the old PersonSSN exists in the CurrentDriver table
+    $checkQueryCurrentDriver = "SELECT * FROM CurrentDriver WHERE PersonSSN = '$oldPersonSSN'";
+    $checkResultCurrentDriver = $mysqli->query($checkQueryCurrentDriver);
 
-    $updateQueryPerson = "UPDATE Person 
-                          SET PersonLname = '$PersonLname', PersonFname = '$PersonFname', PersonDOB = '$PersonDOB'
-                          WHERE PersonSSN = '$PersonSSN'";
+    if ($checkResultCurrentDriver->num_rows > 0) {
+        // Check if the new PersonSSN already exists in the Person table
+        $checkQueryNewPersonSSN = "SELECT * FROM Person WHERE PersonSSN = '$newPersonSSN'";
+        $checkResultNewPersonSSN = $mysqli->query($checkQueryNewPersonSSN);
 
-    if ($mysqli->query($updateQuery) === TRUE && $mysqli->query($updateQueryPerson) === TRUE) {
-        echo "Record updated successfully";
+        if ($checkResultNewPersonSSN->num_rows === 0) {
+            // Update data in the CurrentDriver table
+            $updateQueryCurrentDriver = "UPDATE CurrentDriver 
+                                         SET PersonSSN = '$newPersonSSN', 
+                                             DLNumber = '$newDLNumber', 
+                                             InsurancePolicyNumber = '$newInsurancePolicyNumber', 
+                                             DLExpDate = '$newDLExpDate' 
+                                         WHERE PersonSSN = '$oldPersonSSN'";
+            if ($mysqli->query($updateQueryCurrentDriver) === TRUE) {
+                // Update data in the Person table
+                $updateQueryPerson = "UPDATE Person 
+                                      SET PersonSSN = '$newPersonSSN', 
+                                          PersonFname = '$newPersonFname', 
+                                          PersonLname = '$newPersonLname', 
+                                          PersonDOB = '$newPersonDOB' 
+                                      WHERE PersonSSN = '$oldPersonSSN'";
+                if ($mysqli->query($updateQueryPerson) === TRUE) {
+                    echo "Records updated successfully";
+
+                    // Clear form fields after successful update
+                    $oldPersonSSN = $newPersonSSN = $newDLNumber = $newInsurancePolicyNumber = $newDLExpDate = $newPersonFname = $newPersonLname = $newPersonDOB = '';
+                } else {
+                    echo "Error updating records in Person table: " . $mysqli->error;
+                }
+            } else {
+                echo "Error updating records in CurrentDriver table: " . $mysqli->error;
+            }
+        } else {
+            // Display error message if new PersonSSN already exists
+            echo "Error: New Person SSN '$newPersonSSN' already exists. Please choose a different one.";
+        }
     } else {
-        echo "Error updating record: " . $mysqli->error;
+        // Display error message if old PersonSSN does not exist in CurrentDriver table
+        echo "Error: Person with SSN '$oldPersonSSN' does not exist in CurrentDriver. Please enter an existing Person SSN.";
     }
 }
 
@@ -75,33 +87,35 @@ $mysqli->close();
     <h2>Update Current Driver Data</h2>
 
     <form method="post" action="">
-        <label for="PersonSSN">Current Driver SSN to Update:</label>
-        <input type="text" name="PersonSSN" value="<?php echo $PersonSSN; ?>" required><br>
+        <label for="oldPersonSSN">Enter Existing Person SSN to Update:</label>
+        <input type="text" name="oldPersonSSN" value="<?php echo $oldPersonSSN; ?>" required><br>
 
-        <label for="DLNumber">Driver's License Number:</label>
-        <input type="text" name="DLNumber" value="<?php echo $DLNumber; ?>" required><br>
+        <label for="newPersonSSN">Enter New Person SSN:</label>
+        <input type="text" name="newPersonSSN" value="<?php echo $newPersonSSN; ?>" required><br>
 
-        <label for="InsurancePolicyNumber">Insurance Policy Number:</label>
-        <input type="text" name="InsurancePolicyNumber" value="<?php echo $InsurancePolicyNumber; ?>" required><br>
+        <label for="newDLNumber">Enter New DL Number:</label>
+        <input type="text" name="newDLNumber" value="<?php echo $newDLNumber; ?>" required><br>
 
-        <label for="DLExpDate">Driver's License Expiration Date:</label>
-        <input type="date" name="DLExpDate" value="<?php echo $DLExpDate; ?>" required><br>
+        <label for="newInsurancePolicyNumber">Enter New Insurance Policy Number:</label>
+        <input type="text" name="newInsurancePolicyNumber" value="<?php echo $newInsurancePolicyNumber; ?>" required><br>
 
-        <label for="PersonLname">Last Name:</label>
-        <input type="text" name="PersonLname" value="<?php echo $PersonLname; ?>" required><br>
+        <label for="newDLExpDate">Enter New DL Expiry Date:</label>
+        <input type="date" name="newDLExpDate" value="<?php echo $newDLExpDate; ?>" required><br>
 
-        <label for="PersonFname">First Name:</label>
-        <input type="text" name="PersonFname" value="<?php echo $PersonFname; ?>" required><br>
+        <label for="newPersonFname">Enter New Person First Name:</label>
+        <input type="text" name="newPersonFname" value="<?php echo $newPersonFname; ?>" required><br>
 
-        <label for="PersonDOB">Date of Birth:</label>
-        <input type="date" name="PersonDOB" value="<?php echo $PersonDOB; ?>" required><br>
+        <label for="newPersonLname">Enter New Person Last Name:</label>
+        <input type="text" name="newPersonLname" value="<?php echo $newPersonLname; ?>" required><br>
 
-        <button type="submit">Update</button>
+        <label for="newPersonDOB">Enter New Person Date of Birth:</label>
+        <input type="text" name="newPersonDOB" value="<?php echo $newPersonDOB; ?>" required><br>
+
+        <button type="submit">Update Records</button>
     </form>
 
-    <a href="Person.php">
-        <button type="button">Go back to Person Data</button>
+    <a href="CurrentDriver.php">
+        <button type="button">Go back to Current Driver Data</button>
     </a>
-
 </body>
 </html>

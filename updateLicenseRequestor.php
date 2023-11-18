@@ -3,60 +3,71 @@
 require_once('db_connect.php');
 
 // Initialize variables
-$PersonLname = $PersonFname = $PersonSSN = $PersonDOB = $ApplicationNumber = '';
-$action = isset($_GET['action']) ? $_GET['action'] : '';
-
-// If the action is 'update' and SSN is provided, fetch the data
-if ($action == 'update' && isset($_GET['ssn'])) {
-    $PersonSSNToUpdate = mysqli_real_escape_string($mysqli, $_GET['ssn']);
-    $ApplicationNumberToUpdate = mysqli_real_escape_string($mysqli, $_GET['applicationNumber']);
-    $query = "SELECT * FROM LicenseRequestor
-              JOIN Person ON LicenseRequestor.PersonSSN = Person.PersonSSN
-              WHERE LicenseRequestor.PersonSSN = '$PersonSSNToUpdate' 
-                AND LicenseRequestor.ApplicationNumber = '$ApplicationNumberToUpdate'";
-    $result = $mysqli->query($query);
-
-    if ($result && $result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        $PersonLname = $row['PersonLname'];
-        $PersonFname = $row['PersonFname'];
-        $PersonSSN = $row['PersonSSN'];
-        $PersonDOB = $row['PersonDOB'];
-        $ApplicationNumber = $row['ApplicationNumber'];
-    } else {
-        echo "Error: Record not found.";
-        exit();
-    }
-}
+$oldPersonSSN = '';
+$newPersonSSN = '';
+$newApplicationNumber = '';
+$newPersonFname = '';
+$newPersonLname = '';
+$newPersonDOB = '';
 
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Retrieve form data (sanitize input as needed)
-    $PersonSSN = mysqli_real_escape_string($mysqli, $_POST["PersonSSN"]);
-    $ApplicationNumber = mysqli_real_escape_string($mysqli, $_POST["ApplicationNumber"]);
-    $PersonLname = mysqli_real_escape_string($mysqli, $_POST["PersonLname"]);
-    $PersonFname = mysqli_real_escape_string($mysqli, $_POST["PersonFname"]);
-    $PersonDOB = mysqli_real_escape_string($mysqli, $_POST["PersonDOB"]);
+    $oldPersonSSN = mysqli_real_escape_string($mysqli, $_POST["oldPersonSSN"]);
+    $newPersonSSN = mysqli_real_escape_string($mysqli, $_POST["newPersonSSN"]);
+    $newApplicationNumber = mysqli_real_escape_string($mysqli, $_POST["newApplicationNumber"]);
+    $newPersonFname = mysqli_real_escape_string($mysqli, $_POST["newPersonFname"]);
+    $newPersonLname = mysqli_real_escape_string($mysqli, $_POST["newPersonLname"]);
+    $newPersonDOB = mysqli_real_escape_string($mysqli, $_POST["newPersonDOB"]);
 
-    // Update data in the LicenseRequestor and Person tables
-    $updateQuery = "UPDATE LicenseRequestor 
-                    SET ApplicationNumber = '$ApplicationNumber'
-                    WHERE PersonSSN = '$PersonSSN'";
+    // Check if the old PersonSSN exists in the LicenseRequestor table
+    $checkQueryLicenseRequestor = "SELECT * FROM LicenseRequestor WHERE PersonSSN = '$oldPersonSSN'";
+    $checkResultLicenseRequestor = $mysqli->query($checkQueryLicenseRequestor);
 
-    $updateQueryPerson = "UPDATE Person 
-                          SET PersonLname = '$PersonLname', PersonFname = '$PersonFname', PersonDOB = '$PersonDOB'
-                          WHERE PersonSSN = '$PersonSSN'";
+    if ($checkResultLicenseRequestor->num_rows > 0) {
+        // Check if the new PersonSSN already exists in the Person table
+        $checkQueryNewPersonSSN = "SELECT * FROM Person WHERE PersonSSN = '$newPersonSSN'";
+        $checkResultNewPersonSSN = $mysqli->query($checkQueryNewPersonSSN);
 
-    if ($mysqli->query($updateQuery) === TRUE && $mysqli->query($updateQueryPerson) === TRUE) {
-        echo "Record updated successfully";
+        if ($checkResultNewPersonSSN->num_rows === 0) {
+            // Update data in the LicenseRequestor table
+            $updateQueryLicenseRequestor = "UPDATE LicenseRequestor 
+                                           SET PersonSSN = '$newPersonSSN', 
+                                               ApplicationNumber = '$newApplicationNumber' 
+                                           WHERE PersonSSN = '$oldPersonSSN'";
+            if ($mysqli->query($updateQueryLicenseRequestor) === TRUE) {
+                // Update data in the Person table
+                $updateQueryPerson = "UPDATE Person 
+                                      SET PersonSSN = '$newPersonSSN', 
+                                          PersonFname = '$newPersonFname', 
+                                          PersonLname = '$newPersonLname', 
+                                          PersonDOB = '$newPersonDOB' 
+                                      WHERE PersonSSN = '$oldPersonSSN'";
+                if ($mysqli->query($updateQueryPerson) === TRUE) {
+                    echo "Records updated successfully";
+
+                    // Clear form fields after successful update
+                    $oldPersonSSN = $newPersonSSN = $newApplicationNumber = $newPersonFname = $newPersonLname = $newPersonDOB = '';
+                } else {
+                    echo "Error updating records in Person table: " . $mysqli->error;
+                }
+            } else {
+                echo "Error updating records in LicenseRequestor table: " . $mysqli->error;
+            }
+        } else {
+            // Display error message if new PersonSSN already exists
+            echo "Error: New Person SSN '$newPersonSSN' already exists. Please choose a different one.";
+        }
     } else {
-        echo "Error updating record: " . $mysqli->error;
+        // Display error message if old PersonSSN does not exist in LicenseRequestor table
+        echo "Error: Person with SSN '$oldPersonSSN' does not exist in LicenseRequestor. Please enter an existing Person SSN.";
     }
 }
 
 // Close the database connection
 $mysqli->close();
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -70,27 +81,29 @@ $mysqli->close();
     <h2>Update License Requestor Data</h2>
 
     <form method="post" action="">
-        <label for="PersonSSN">License Requestor SSN to Update:</label>
-        <input type="text" name="PersonSSN" value="<?php echo $PersonSSN; ?>" required><br>
+        <label for="oldPersonSSN">Enter Existing Person SSN to Update:</label>
+        <input type="text" name="oldPersonSSN" value="<?php echo $oldPersonSSN; ?>" required><br>
 
-        <label for="ApplicationNumber">Application Number:</label>
-        <input type="text" name="ApplicationNumber" value="<?php echo $ApplicationNumber; ?>" required><br>
+        <label for="newPersonSSN">Enter New Person SSN:</label>
+        <input type="text" name="newPersonSSN" value="<?php echo $newPersonSSN; ?>" required><br>
 
-        <label for="PersonLname">Last Name:</label>
-        <input type="text" name="PersonLname" value="<?php echo $PersonLname; ?>" required><br>
+        <label for="newApplicationNumber">Enter New Application Number:</label>
+        <input type="text" name="newApplicationNumber" value="<?php echo $newApplicationNumber; ?>" required><br>
 
-        <label for="PersonFname">First Name:</label>
-        <input type="text" name="PersonFname" value="<?php echo $PersonFname; ?>" required><br>
+        <label for="newPersonFname">Enter New Person First Name:</label>
+        <input type="text" name="newPersonFname" value="<?php echo $newPersonFname; ?>" required><br>
 
-        <label for="PersonDOB">Date of Birth:</label>
-        <input type="date" name="PersonDOB" value="<?php echo $PersonDOB; ?>" required><br>
+        <label for="newPersonLname">Enter New Person Last Name:</label>
+        <input type="text" name="newPersonLname" value="<?php echo $newPersonLname; ?>" required><br>
 
-        <button type="submit">Update</button>
+        <label for="newPersonDOB">Enter New Person Date of Birth:</label>
+        <input type="text" name="newPersonDOB" value="<?php echo $newPersonDOB; ?>" required><br>
+
+        <button type="submit">Update Records</button>
     </form>
 
-    <a href="Person.php">
-        <button type="button">Go back to Person Data</button>
+    <a href="LicenseRequestor.php">
+        <button type="button">Go back to License Requestor Data</button>
     </a>
-
 </body>
 </html>
