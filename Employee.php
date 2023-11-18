@@ -173,5 +173,23 @@ $mysqli->close();
     <a href="deleteInspector.php">
         <button type="button">Delete Inspector Employee Data</button>
     </a>
+    <a href="selectAdminEmp.php">
+        <button type="button">View Admin Employee Data</button>
+    </a>
+    <a href="selectApplicationEmp.php">
+        <button type="button">View Application Employee Data</button>
+    </a>
+    <a href="selectAuditor.php">
+        <button type="button">View Auditor Employee Data</button>
+    </a>
+    <a href="selectComplianceAgent.php">
+        <button type="button">View Compliance Agent Employee Data</button>
+    </a>
+    <a href="selectDataEntryEmp.php">
+        <button type="button">View Data Entry Employee Data</button>
+    </a>
+    <a href="selectInspector.php">
+        <button type="button">View Inspector Employee Data</button>
+    </a>
 </body>
 </html>

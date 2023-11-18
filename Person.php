@@ -153,5 +153,14 @@ $mysqli->close();
     <a href="deleteVehicleRegistrationRequestor.php">
         <button type="button">Delete Vehicle Registration Requestor Data</button>
     </a>
+    <a href="selectLicenseRequestor.php">
+        <button type="button">View License Requestor Data</button>
+    </a>
+    <a href="selectCurrentDriver.php">
+        <button type="button">View Current Driver Data</button>
+    </a>
+    <a href="selectVehicleRegistrationRequestor.php">
+        <button type="button">View Vehicle Registraton Requestor Data</button>
+    </a>
 </body>
 </html>

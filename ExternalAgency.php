@@ -147,5 +147,15 @@ $mysqli->close();
     <a href="deleteVehicleManu.php">
         <button type="button">Delete Vehicle Manufacturer Data</button>
     </a>
+    
+    <a href="selectGovAgencies.php">
+        <button type="button">View Government Agency Data</button>
+    </a>
+    <a href="selectLawAgencies.php">
+        <button type="button">View Law Agency Data</button>
+    </a>
+    <a href="selectVehicleManu.php">
+        <button type="button">View Vehicle Manufacturer Data</button>
+    </a>
 </body>
 </html>
