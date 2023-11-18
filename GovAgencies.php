@@ -12,20 +12,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $CAGECode = mysqli_real_escape_string($mysqli, $_POST["CAGECode"]);
     $EAName = mysqli_real_escape_string($mysqli, $_POST["EAName"]);
 
-    // Check if EAName already exists in GovAgencies
-    $checkQueryGov = "SELECT * FROM GovAgencies WHERE EAName = '$EAName'";
-    $checkResultGov = $mysqli->query($checkQueryGov);
+    // Check if EAName already exists in ExternalAgency
+    $checkQueryExternalAgency = "SELECT * FROM ExternalAgency WHERE EAName = '$EAName'";
+    $checkResultExternalAgency = $mysqli->query($checkQueryExternalAgency);
 
-    // Check if EAName already exists in LawAgencies
-    $checkQueryLaw = "SELECT * FROM LawAgencies WHERE EAName = '$EAName'";
-    $checkResultLaw = $mysqli->query($checkQueryLaw);
-
-    // Check if EAName already exists in VehicleManu
-    $checkQueryVehicle = "SELECT * FROM VehicleManu WHERE EAName = '$EAName'";
-    $checkResultVehicle = $mysqli->query($checkQueryVehicle);
-
-    // If EAName is not found in any of the tables, insert data
-    if ($checkResultGov->num_rows === 0 && $checkResultLaw->num_rows === 0 && $checkResultVehicle->num_rows === 0) {
+    // If EAName is found in ExternalAgency, insert data into GovAgencies
+    if ($checkResultExternalAgency->num_rows > 0) {
         // Insert data into the GovAgencies table
         $query = "INSERT INTO GovAgencies (CAGECode, EAName) 
                   VALUES ('$CAGECode', '$EAName')";
@@ -39,8 +31,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             echo "Error: " . $query . "<br>" . $mysqli->error;
         }
     } else {
-        // Display error message if EAName already exists
-        echo "Error: EAName '$EAName' is already used. Please try a different one.";
+        // Display error message if EAName does not exist in ExternalAgency
+        echo "Error: EAName '$EAName' does not exist in ExternalAgency. Please enter an existing External Agency Name.";
     }
 }
 

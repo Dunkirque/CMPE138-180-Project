@@ -12,39 +12,49 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $VehicleManuCode = mysqli_real_escape_string($mysqli, $_POST["VehicleManuCode"]);
     $EAName = mysqli_real_escape_string($mysqli, $_POST["EAName"]);
 
-    // Check if EAName already exists in GovAgencies
-    $checkQueryGovAgencies = "SELECT * FROM GovAgencies WHERE EAName = '$EAName'";
-    $checkResultGovAgencies = $mysqli->query($checkQueryGovAgencies);
+    // Check if EAName already exists in ExternalAgency
+    $checkQueryExternalAgency = "SELECT * FROM ExternalAgency WHERE EAName = '$EAName'";
+    $checkResultExternalAgency = $mysqli->query($checkQueryExternalAgency);
 
-    // Check if EAName already exists in LawAgencies
-    $checkQueryLawAgencies = "SELECT * FROM LawAgencies WHERE EAName = '$EAName'";
-    $checkResultLawAgencies = $mysqli->query($checkQueryLawAgencies);
+    // If EAName is found in ExternalAgency, insert data into VehicleManu
+    if ($checkResultExternalAgency->num_rows > 0) {
+        // Check if EAName already exists in VehicleManu
+        $checkQueryVehicleManu = "SELECT * FROM VehicleManu WHERE EAName = '$EAName'";
+        $checkResultVehicleManu = $mysqli->query($checkQueryVehicleManu);
 
-    // Check if EAName already exists in VehicleManu
-    $checkQueryVehicleManu = "SELECT * FROM VehicleManu WHERE EAName = '$EAName'";
-    $checkResultVehicleManu = $mysqli->query($checkQueryVehicleManu);
+        // Check if EAName already exists in LawAgencies
+        $checkQueryLawAgencies = "SELECT * FROM LawAgencies WHERE EAName = '$EAName'";
+        $checkResultLawAgencies = $mysqli->query($checkQueryLawAgencies);
 
-    // If EAName is not found in any of the tables, insert data into VehicleManu
-    if (
-        $checkResultGovAgencies->num_rows === 0 &&
-        $checkResultLawAgencies->num_rows === 0 &&
-        $checkResultVehicleManu->num_rows === 0
-    ) {
-        // Insert data into the VehicleManu table
-        $query = "INSERT INTO VehicleManu (VehicleManuCode, EAName) 
-                  VALUES ('$VehicleManuCode', '$EAName')";
+        // Check if EAName already exists in GovAgencies
+        $checkQueryGovAgencies = "SELECT * FROM GovAgencies WHERE EAName = '$EAName'";
+        $checkResultGovAgencies = $mysqli->query($checkQueryGovAgencies);
 
-        if ($mysqli->query($query) === TRUE) {
-            echo "Record inserted successfully";
+        // If EAName is not found in any of the tables, insert data into VehicleManu
+        if (
+            $checkResultVehicleManu->num_rows === 0 &&
+            $checkResultLawAgencies->num_rows === 0 &&
+            $checkResultGovAgencies->num_rows === 0
+        ) {
+            // Insert data into the VehicleManu table
+            $query = "INSERT INTO VehicleManu (VehicleManuCode, EAName) 
+                      VALUES ('$VehicleManuCode', '$EAName')";
 
-            // Clear form fields after successful insertion
-            $VehicleManuCode = $EAName = '';
+            if ($mysqli->query($query) === TRUE) {
+                echo "Record inserted successfully";
+
+                // Clear form fields after successful insertion
+                $VehicleManuCode = $EAName = '';
+            } else {
+                echo "Error: " . $query . "<br>" . $mysqli->error;
+            }
         } else {
-            echo "Error: " . $query . "<br>" . $mysqli->error;
+            // Display error message if EAName already exists in other tables
+            echo "Error: Agency with name '$EAName' already exists in other tables. Please try a different one.";
         }
     } else {
-        // Display error message if EAName already exists
-        echo "Error: Agency with name '$EAName' already exists. Please try a different one.";
+        // Display error message if EAName does not exist in ExternalAgency
+        echo "Error: Agency with name '$EAName' does not exist in ExternalAgency. Please enter an existing External Agency Name.";
     }
 }
 

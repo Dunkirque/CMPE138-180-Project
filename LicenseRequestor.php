@@ -12,39 +12,49 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $ApplicationNumber = mysqli_real_escape_string($mysqli, $_POST["ApplicationNumber"]);
     $PersonSSN = mysqli_real_escape_string($mysqli, $_POST["PersonSSN"]);
 
-    // Check if PersonSSN already exists in LicenseRequestor
-    $checkQueryLicense = "SELECT * FROM LicenseRequestor WHERE PersonSSN = '$PersonSSN'";
-    $checkResultLicense = $mysqli->query($checkQueryLicense);
+    // Check if PersonSSN already exists in Person
+    $checkQueryPerson = "SELECT * FROM Person WHERE PersonSSN = '$PersonSSN'";
+    $checkResultPerson = $mysqli->query($checkQueryPerson);
 
-    // Check if PersonSSN already exists in CurrentDriver
-    $checkQueryCurrentDriver = "SELECT * FROM CurrentDriver WHERE PersonSSN = '$PersonSSN'";
-    $checkResultCurrentDriver = $mysqli->query($checkQueryCurrentDriver);
+    // If PersonSSN is found in Person, insert data into LicenseRequestor
+    if ($checkResultPerson->num_rows > 0) {
+        // Check if PersonSSN already exists in LicenseRequestor
+        $checkQueryLicense = "SELECT * FROM LicenseRequestor WHERE PersonSSN = '$PersonSSN'";
+        $checkResultLicense = $mysqli->query($checkQueryLicense);
 
-    // Check if PersonSSN already exists in VehicleRegRequestor
-    $checkQueryVehicleRegRequestor = "SELECT * FROM VehicleRegRequestor WHERE PersonSSN = '$PersonSSN'";
-    $checkResultVehicleRegRequestor = $mysqli->query($checkQueryVehicleRegRequestor);
+        // Check if PersonSSN already exists in CurrentDriver
+        $checkQueryCurrentDriver = "SELECT * FROM CurrentDriver WHERE PersonSSN = '$PersonSSN'";
+        $checkResultCurrentDriver = $mysqli->query($checkQueryCurrentDriver);
 
-    // If PersonSSN is not found in any of the tables, insert data
-    if (
-        $checkResultLicense->num_rows === 0 &&
-        $checkResultCurrentDriver->num_rows === 0 &&
-        $checkResultVehicleRegRequestor->num_rows === 0
-    ) {
-        // Insert data into the LicenseRequestor table
-        $query = "INSERT INTO LicenseRequestor (ApplicationNumber, PersonSSN) 
-                  VALUES ('$ApplicationNumber', '$PersonSSN')";
+        // Check if PersonSSN already exists in VehicleRegRequestor
+        $checkQueryVehicleRegRequestor = "SELECT * FROM VehicleRegRequestor WHERE PersonSSN = '$PersonSSN'";
+        $checkResultVehicleRegRequestor = $mysqli->query($checkQueryVehicleRegRequestor);
 
-        if ($mysqli->query($query) === TRUE) {
-            echo "Record inserted successfully";
+        // If PersonSSN is not found in any of the tables, insert data into LicenseRequestor
+        if (
+            $checkResultLicense->num_rows === 0 &&
+            $checkResultCurrentDriver->num_rows === 0 &&
+            $checkResultVehicleRegRequestor->num_rows === 0
+        ) {
+            // Insert data into the LicenseRequestor table
+            $query = "INSERT INTO LicenseRequestor (ApplicationNumber, PersonSSN) 
+                      VALUES ('$ApplicationNumber', '$PersonSSN')";
 
-            // Clear form fields after successful insertion
-            $ApplicationNumber = $PersonSSN = '';
+            if ($mysqli->query($query) === TRUE) {
+                echo "Record inserted successfully";
+
+                // Clear form fields after successful insertion
+                $ApplicationNumber = $PersonSSN = '';
+            } else {
+                echo "Error: " . $query . "<br>" . $mysqli->error;
+            }
         } else {
-            echo "Error: " . $query . "<br>" . $mysqli->error;
+            // Display error message if PersonSSN already exists in other tables
+            echo "Error: SSN '$PersonSSN' already exists in other tables. Please try a different one.";
         }
     } else {
-        // Display error message if PersonSSN already exists
-        echo "Error: SSN '$PersonSSN' is already used. Please try a different one.";
+        // Display error message if PersonSSN does not exist in Person
+        echo "Error: SSN '$PersonSSN' does not exist in Person. Please enter an existing Person SSN.";
     }
 }
 

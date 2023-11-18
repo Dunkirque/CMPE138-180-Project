@@ -10,35 +10,43 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Retrieve form data (sanitize input as needed)
     $EmpSSN = mysqli_real_escape_string($mysqli, $_POST["EmpSSN"]);
 
-    // Check if the EmpSSN already exists in any subclass
-    $checkQuery = "SELECT * FROM AdminEmp WHERE EmpSSN = '$EmpSSN'
-                   UNION ALL
-                   SELECT * FROM ApplicationEmp WHERE EmpSSN = '$EmpSSN'
-                   UNION ALL
-                   SELECT * FROM ComplianceAgent WHERE EmpSSN = '$EmpSSN'
-                   UNION ALL
-                   SELECT * FROM Auditor WHERE EmpSSN = '$EmpSSN'
-                   UNION ALL
-                   SELECT * FROM DataEntryEmp WHERE EmpSSN = '$EmpSSN'
-                   UNION ALL
-                   SELECT * FROM Inspector WHERE EmpSSN = '$EmpSSN'";
+    // Check if the EmpSSN already exists in the Employee table
+    $checkQueryEmployee = "SELECT * FROM Employee WHERE EmpSSN = '$EmpSSN'";
+    $checkResultEmployee = $mysqli->query($checkQueryEmployee);
 
-    $checkResult = $mysqli->query($checkQuery);
-
-    if ($checkResult && $checkResult->num_rows > 0) {
-        echo "Error: EmpSSN already used in another role.";
+    if ($checkResultEmployee->num_rows === 0) {
+        echo "Error: Employee with SSN '$EmpSSN' does not exist. Please enter an existing Employee SSN.";
     } else {
-        // Insert data into the AdminEmp table
-        $insertQuery = "INSERT INTO AdminEmp (EmpSSN) 
-                        VALUES ('$EmpSSN')";
+        // Check if the EmpSSN already exists in any subclass
+        $checkQuery = "SELECT * FROM AdminEmp WHERE EmpSSN = '$EmpSSN'
+                       UNION ALL
+                       SELECT * FROM ApplicationEmp WHERE EmpSSN = '$EmpSSN'
+                       UNION ALL
+                       SELECT * FROM ComplianceAgent WHERE EmpSSN = '$EmpSSN'
+                       UNION ALL
+                       SELECT * FROM Auditor WHERE EmpSSN = '$EmpSSN'
+                       UNION ALL
+                       SELECT * FROM DataEntryEmp WHERE EmpSSN = '$EmpSSN'
+                       UNION ALL
+                       SELECT * FROM Inspector WHERE EmpSSN = '$EmpSSN'";
 
-        if ($mysqli->query($insertQuery) === TRUE) {
-            echo "Record inserted successfully";
+        $checkResult = $mysqli->query($checkQuery);
 
-            // Clear form fields after successful insertion
-            $EmpSSN = '';
+        if ($checkResult && $checkResult->num_rows > 0) {
+            echo "Error: EmpSSN already used in another role.";
         } else {
-            echo "Error inserting record: " . $mysqli->error;
+            // Insert data into the AdminEmp table
+            $insertQuery = "INSERT INTO AdminEmp (EmpSSN) 
+                            VALUES ('$EmpSSN')";
+
+            if ($mysqli->query($insertQuery) === TRUE) {
+                echo "Record inserted successfully";
+
+                // Clear form fields after successful insertion
+                $EmpSSN = '';
+            } else {
+                echo "Error inserting record: " . $mysqli->error;
+            }
         }
     }
 }
