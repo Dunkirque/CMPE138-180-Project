@@ -60,7 +60,7 @@ $mysqli->close();
         <button type="submit">Submit</button>
     </form>
 
-    <form action="DrivingSchoolNameSearch.php">
+    <form action="">
 
         <br> <br>
         Enter name to search Driving School records:<br>
