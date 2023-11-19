@@ -27,5 +27,12 @@
     </a>
     </h2>
 
+    <h2>
+    <a href="HomePage.php">
+        <button type="button">Go to Home Page</button>
+    </a>
+    </h2>
+
+
 </body>
 </html>

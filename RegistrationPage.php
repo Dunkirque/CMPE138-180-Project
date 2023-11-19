@@ -2,25 +2,32 @@
 // Include the database connection file
 require_once('db_connect.php');
 
+// Initialize variables
+$username = '';
+$password = '';
+
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Get user input from the form
-    $username = $_POST["username"];
-    $password = $_POST["password"];
-    $email = $_POST["email"];
+    // Retrieve form data (sanitize input as needed)
+    $username = mysqli_real_escape_string($mysqli, $_POST["username"]);
+    $password = mysqli_real_escape_string($mysqli, $_POST["password"]);
 
-    // Hash the password (you should use a stronger hashing method in production)
-    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+    // Hash the password
+    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-    // Insert user data into the database
-    $sql = "INSERT INTO LoginUserTable (username, password, email) VALUES ('$username', '$hashed_password', '$email')";
+    // Set the role to 'Person'
+    $role = 'Person';
 
-    if ($mysqli->query($sql) === TRUE) {
-        // Redirect to the login page after successful registration
-        header("Location: LoginPage.php");
-        exit();
+    // Insert data into the RegistrationAdminPage table
+    $query = "INSERT INTO RegistrationAdminPage (RegUsername, RegPassword, RegRole) 
+              VALUES ('$username', '$hashedPassword', '$role')";
+
+    if ($mysqli->query($query) === TRUE) {
+        echo "Registration successful!";
+        // Clear form fields after successful registration
+        $username = $password = '';
     } else {
-        echo "Error: " . $sql . "<br>" . $mysqli->error;
+        echo "Error: " . $query . "<br>" . $mysqli->error;
     }
 }
 
@@ -32,23 +39,28 @@ $mysqli->close();
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registration Page</title>
+    <title>User Registration Page</title>
 </head>
 <body>
-    <h2>Registration Form</h2>
-    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+
+    <h2>User Registration Page</h2>
+
+    <form method="post" action="">
         <label for="username">Username:</label>
-        <input type="text" name="username" required><br>
+        <input type="text" name="username" value="<?php echo $username; ?>" required><br>
 
-        <label for="password">Password:</label>
-        <input type="password" name="password" required><br>
+        <label for="password">Password(Max 10 characters):</label>
+        <input type="password" name="password" maxlength="10" required><br>
 
-        <label for="email">Email:</label>
-        <input type="email" name="email" required><br>
-
-        <input type="submit" value="Register">
+        <button type="submit">Register</button>
     </form>
+    <a href="HomePage.php">
+        <button type="button">Go To Home Page</button>
+    </a>
+    <a href="LoginPage.php">
+        <button type="button">Go To Login Page</button>
+    </a>
 </body>
 </html>
-

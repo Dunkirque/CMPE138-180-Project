@@ -10,6 +10,9 @@
 
     <h1>Home Admin Page</h1>
     <h2>Login/Registration Section</h2>
+    <a href="HomePage.php">
+        <button type="button">Go to Home Page</button>
+    </a>
     <a href="LoginPage.php">
         <button type="button">Go to User Login Page</button>
     </a>

@@ -10,22 +10,28 @@
 
     <h1>Home Application Employee Page</h1>
     <h2>
-    <a href="LoginPage.php">
-        <button type="button">I am a Database User with an Account (Login)</button>
+    <a href="selectLicenseRequestor.php">
+        <button type="button">View License Requestor Data</button>
     </a>
     </h2>
 
     <h2>
-    <a href="RegistrationPage.php">
-        <button type="button">I am a Database User without an Account (Registration)</button>
+    <a href="deleteLicenseRequestor.php">
+        <button type="button">Delete License Requestor Data</button>
     </a>
     </h2>
 
     <h2>
-    <a href="LoginAdminpage.php">
-        <button type="button">I am a Database Admin</button>
+    <a href="updateLicenseRequestor.php">
+        <button type="button">Update License Requestor Data</button>
     </a>
     </h2>
+    <h2>
+    <a href="HomePage.php">
+        <button type="button">Go to Home Page</button>
+    </a>
+    </h2>
+
 
 </body>
 </html>

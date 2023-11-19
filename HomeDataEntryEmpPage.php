@@ -10,22 +10,34 @@
 
     <h1>Home Data Entry Employee Page</h1>
     <h2>
-    <a href="LoginPage.php">
-        <button type="button">I am a Database User with an Account (Login)</button>
+    <a href="Person.php">
+        <button type="button">Insert Data</button>
     </a>
     </h2>
 
     <h2>
-    <a href="RegistrationPage.php">
-        <button type="button">I am a Database User without an Account (Registration)</button>
+    <a href="selectLicenseRequestor.php">
+        <button type="button">View License Requestor Data</button>
     </a>
     </h2>
 
     <h2>
-    <a href="LoginAdminpage.php">
-        <button type="button">I am a Database Admin</button>
+    <a href="selectCurrentDriver.php">
+        <button type="button">View Current Driver Data</button>
     </a>
     </h2>
+
+    <h2>
+    <a href="selectVehicleRegistrationRequestor.php">
+        <button type="button">View Vehicle Registration Requestor Data</button>
+    </a>
+    </h2>
+    <h2>
+    <a href="HomePage.php">
+        <button type="button">Go to Home Page</button>
+    </a>
+    </h2>
+
 
 </body>
 </html>

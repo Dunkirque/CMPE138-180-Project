@@ -27,5 +27,12 @@
     </a>
     </h2>
 
+    <h2>
+    <form method="post" action="init_admin.php">
+    <input type="hidden" name="init_admin" value="true">
+    <button type="submit">Initialize Admin Account</button>
+</form>
+    </h2>
+
 </body>
 </html>

@@ -10,22 +10,16 @@
 
     <h1>Home Inspector Page</h1>
     <h2>
-    <a href="LoginPage.php">
-        <button type="button">I am a Database User with an Account (Login)</button>
+    <a href="selectVehicleManu.php">
+        <button type="button">View Vehicle Manufacturer Data</button>
+    </a>
+    </h2>
+    <h2>
+    <a href="HomePage.php">
+        <button type="button">Go to Home Page</button>
     </a>
     </h2>
 
-    <h2>
-    <a href="RegistrationPage.php">
-        <button type="button">I am a Database User without an Account (Registration)</button>
-    </a>
-    </h2>
-
-    <h2>
-    <a href="LoginAdminpage.php">
-        <button type="button">I am a Database Admin</button>
-    </a>
-    </h2>
 
 </body>
 </html>

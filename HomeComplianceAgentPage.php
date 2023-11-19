@@ -9,23 +9,85 @@
 <body>
 
     <h1>Home Compliance Agent Page</h1>
+
+
+    <h2>Viewing Section</h2>
     <h2>
-    <a href="LoginPage.php">
-        <button type="button">I am a Database User with an Account (Login)</button>
+    <a href="HomePage.php">
+        <button type="button">Go to Home Page</button>
     </a>
     </h2>
 
-    <h2>
-    <a href="RegistrationPage.php">
-        <button type="button">I am a Database User without an Account (Registration)</button>
+    <h3>
+    <a href="selectApplicationEmp.php">
+        <button type="button">View Application Employee Data</button>
     </a>
-    </h2>
+    </h3>
 
-    <h2>
-    <a href="LoginAdminpage.php">
-        <button type="button">I am a Database Admin</button>
+    <h3>
+    <a href="selectDataEntryEmp.php">
+        <button type="button">View Data Entry Employee Data</button>
     </a>
-    </h2>
+    </h3>
+
+    <h3>
+    <a href="selectLicenseRequestor.php">
+        <button type="button">View License Requestor Data</button>
+    </a>
+    </h3>
+
+    <h3>
+    <a href="selectCurrentDriver.php">
+        <button type="button">View Current Driver Data</button>
+    </a>
+    </h3>
+
+    <h3>
+    <a href="selectVehicleRegistrationRequestor.php">
+        <button type="button">View Vehicle Registration Requestor Data</button>
+    </a>
+    </h3>
+
+
+    <h2>Updating Section</h2>
+    <h3>
+    <a href="updateLicenseRequestor.php">
+        <button type="button">Update License Requestor Data</button>
+    </a>
+    </h3>
+
+    <h3>
+    <a href="updateCurrentDriver.php">
+        <button type="button">Update Current Driver Data</button>
+    </a>
+    </h3>
+
+    <h3>
+    <a href="updateVehicleRegistrationRequestor.php">
+        <button type="button">Update Vehicle Registration Requestor Data</button>
+    </a>
+    </h3>
+
+
+    <h2>Deleting Section</h2>
+    <h3>
+    <a href="deleteLicenseRequestor.php">
+        <button type="button">Delete License Requestor Data</button>
+    </a>
+    </h3>
+
+    <h3>
+    <a href="deleteCurrentDriver.php">
+        <button type="button">Delete Current Driver Data</button>
+    </a>
+    </h3>
+
+    <h3>
+    <a href="deleteVehicleRegistrationRequestor.php">
+        <button type="button">Delete Vehicle Registration Requestor Data</button>
+    </a>
+    </h3>
+    
 
 </body>
 </html>

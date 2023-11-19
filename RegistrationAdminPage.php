@@ -18,7 +18,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
     // Insert data into the RegistrationAdminPage table
-    $query = "INSERT INTO RegistrationAdminPage (username, password, role) 
+    $query = "INSERT INTO RegistrationAdminPage (RegUsername, RegPassword, RegRole) 
               VALUES ('$username', '$hashedPassword', '$role')";
 
     if ($mysqli->query($query) === TRUE) {
@@ -50,12 +50,12 @@ $mysqli->close();
         <label for="username">Username:</label>
         <input type="text" name="username" value="<?php echo $username; ?>" required><br>
 
-        <label for="password">Password:</label>
-        <input type="password" name="password" required><br>
+        <label for="password">Password(Max 10 characters):</label>
+        <input type="password" name="password" maxlength="10" required><br>
 
         <label for="role">Role:</label>
         <select name="role" required>
-            <option value="Person" <?php echo ($role == 'Person') ? 'selected' : ''; ?>>Person</option>
+            <option value="Person" <?php echo ($role == 'Person') ? 'selected' : ''; ?>>Person(LicenseRequestor/CurrentDrivers/VehicleRegistrationRequestors)</option>
             <option value="DrivingSchool" <?php echo ($role == 'DrivingSchool') ? 'selected' : ''; ?>>DrivingSchool</option>
             <option value="Admin" <?php echo ($role == 'Admin') ? 'selected' : ''; ?>>Admin</option>
             <option value="ApplicationEmp" <?php echo ($role == 'ApplicationEmp') ? 'selected' : ''; ?>>ApplicationEmp</option>
@@ -71,5 +71,8 @@ $mysqli->close();
         <button type="submit">Register</button>
     </form>
 
+    <a href="HomeAdminPage.php">
+        <button type="button">Go Back To Home Admin Page</button>
+    </a>
 </body>
 </html>

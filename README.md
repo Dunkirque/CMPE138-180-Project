@@ -9,3 +9,13 @@ However for Employee subclasses and External Agencies, an employee and external 
 User creates Person with SSN 11 but goes to LicenseRequestor and inputs an SSN that isn't in the database like 1111 which creates a mysql error.
 
 **Might need to add the ability to just see the subclass data lists without having to input a new input; currently u can see the overlapping information but not the subclass-specific info
+
+
+
+**Idea is that admin username and password is hardcoded in the database (set by the company sort of idea)
+
+
+**Might have issues if password is too long when hashed since RegPassword is only varchar(100)
+
+**Need to add the idea that Data Entry Employee now has a new relationship through Assists/Handles with License Requestor as well
+

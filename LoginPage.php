@@ -13,7 +13,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = mysqli_real_escape_string($mysqli, $_POST["password"]);
 
     // Fetch user data from RegistrationAdminPage
-    $query = "SELECT * FROM RegistrationAdminPage WHERE username = '$username'";
+    $query = "SELECT RegPassword, RegRole FROM RegistrationAdminPage WHERE RegUsername = '$username'";
     $result = $mysqli->query($query);
 
     // Check if the query was successful
@@ -21,15 +21,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Fetch the first row as an associative array
         $row = $result->fetch_assoc();
 
+        /*// Debugging: Print values for troubleshooting
+        echo "Debug: ";
+        var_dump($row); // Check what $row contains
+        var_dump(password_verify($password, $row['RegPassword'])); // Check the password verification
+        */
+        
         // Verify password and redirect based on role
-        if ($row && password_verify($password, $row['password'])) {
-            // Check the role and redirect accordingly
-            switch ($row['role']) {
+        if ($row && password_verify($password, $row['RegPassword'])) {
+            // Redirect based on RegRole
+            $role = $row['RegRole'];
+            switch ($role) {
                 case 'Person':
                     header("Location: HomePersonPage.php");
                     exit();
                 case 'DrivingSchool':
-                    header("Location: HomeDrivingSchoolPage.php");
+                    header("Location: HomeDrivingSchool.php");
                     exit();
                 case 'Admin':
                     header("Location: HomeAdminPage.php");
@@ -39,7 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     exit();
                 case 'Auditor':
                     header("Location: HomeAuditorPage.php");
-                    exit();
+                    exit(); 
                 case 'ComplianceAgent':
                     header("Location: HomeComplianceAgentPage.php");
                     exit();
@@ -57,9 +64,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     exit();
                 case 'VehicleManu':
                     header("Location: HomeVehicleManuPage.php");
-                    exit();    
+                    exit();               
+                // Add other role cases as needed
                 default:
-                    echo "Invalid role.";
+                    echo "Invalid role for this login.";
             }
         } else {
             echo "Invalid username or password.";
@@ -89,11 +97,13 @@ $mysqli->close();
         <label for="username">Username:</label>
         <input type="text" name="username" value="<?php echo $username; ?>" required><br>
 
-        <label for="password">Password:</label>
-        <input type="password" name="password" required><br>
+        <label for="password">Password(Max 10 characters):</label>
+        <input type="password" name="password" maxlength="10" required><br>
 
         <button type="submit">Login</button>
     </form>
-
+    <a href="HomePage.php">
+        <button type="button">Go Back to Home Page</button>
+    </a>
 </body>
 </html>
