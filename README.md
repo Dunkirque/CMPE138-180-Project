@@ -1,4 +1,6 @@
 # CMPE138-180-Project
+**Ran with Xampp
+
 
 **init_data.sql contains the queries used to create the databases;
 
