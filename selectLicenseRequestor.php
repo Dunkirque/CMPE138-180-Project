@@ -45,8 +45,6 @@ $mysqli->close();
             <?php endforeach; ?>
         <?php endif; ?>
     </ul>
-    <a href="Person.php">
-        <button type="button">Go to Person Data</button>
-    </a>
+
 </body>
 </html>

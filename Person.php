@@ -119,7 +119,7 @@ $mysqli->close();
     </ul>
 
     <!-- No need for buttons related to specific roles here -->
-
+    <!--
     <a href="DrivingSchool.php">
         <button type="button">Go to Driving School Data</button>
     </a>
@@ -162,5 +162,6 @@ $mysqli->close();
     <a href="selectVehicleRegistrationRequestor.php">
         <button type="button">View Vehicle Registraton Requestor Data</button>
     </a>
+            -->
 </body>
 </html>

@@ -94,8 +94,6 @@ $mysqli->close();
         <button type="submit">Update Records</button>
     </form>
 
-    <a href="LawAgencies.php">
-        <button type="button">Go back to Law Agency Data</button>
-    </a>
+
 </body>
 </html>

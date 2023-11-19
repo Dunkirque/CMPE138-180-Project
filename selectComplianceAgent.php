@@ -44,9 +44,7 @@ $mysqli->close();
         <?php endif; ?>
     </ul>
 
-    <a href="Employee.php">
-        <button type="button">Go to Employee Data</button>
-    </a>
+
 
 </body>
 </html>

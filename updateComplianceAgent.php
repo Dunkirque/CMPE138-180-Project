@@ -92,8 +92,6 @@ $mysqli->close();
         <button type="submit">Update Records</button>
     </form>
 
-    <a href="ComplianceAgent.php">
-        <button type="button">Go back to Compliance Agent Employee Data</button>
-    </a>
+ 
 </body>
 </html>

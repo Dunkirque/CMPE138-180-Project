@@ -26,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         var_dump($row); // Check what $row contains
         var_dump(password_verify($password, $row['RegPassword'])); // Check the password verification
         */
-        
+
         // Verify password and redirect based on role
         if ($row && password_verify($password, $row['RegPassword'])) {
             // Redirect based on RegRole
@@ -36,7 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     header("Location: HomePersonPage.php");
                     exit();
                 case 'DrivingSchool':
-                    header("Location: HomeDrivingSchool.php");
+                    header("Location: HomeDrivingSchoolPage.php");
                     exit();
                 case 'Admin':
                     header("Location: HomeAdminPage.php");

@@ -102,8 +102,6 @@ $mysqli->close();
         <button type="submit">Update Records</button>
     </form>
 
-    <a href="VehicleManu.php">
-        <button type="button">Go back to Vehicle Manufacturer Data</button>
-    </a>
+
 </body>
 </html>

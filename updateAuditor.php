@@ -92,8 +92,6 @@ $mysqli->close();
         <button type="submit">Update Records</button>
     </form>
 
-    <a href="Auditor.php">
-        <button type="button">Go back to Auditor Employee Data</button>
-    </a>
+
 </body>
 </html>

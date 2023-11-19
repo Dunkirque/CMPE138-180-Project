@@ -97,13 +97,11 @@ $mysqli->close();
         <input type="text" name="newPersonLname" value="<?php echo $newPersonLname; ?>" required><br>
 
         <label for="newPersonDOB">Enter New Person Date of Birth:</label>
-        <input type="text" name="newPersonDOB" value="<?php echo $newPersonDOB; ?>" required><br>
+        <input type="date" name="newPersonDOB" value="<?php echo $newPersonDOB; ?>" required><br>
 
         <button type="submit">Update Records</button>
     </form>
 
-    <a href="LicenseRequestor.php">
-        <button type="button">Go back to License Requestor Data</button>
-    </a>
+ 
 </body>
 </html>

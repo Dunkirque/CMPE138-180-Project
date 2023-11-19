@@ -51,8 +51,6 @@ $mysqli->close();
         <button type="submit">Delete Records</button>
     </form>
 
-    <a href="ExternalAgency.php">
-        <button type="button">Go back to External Agency Data</button>
-    </a>
+
 </body>
 </html>

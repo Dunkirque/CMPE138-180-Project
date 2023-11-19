@@ -45,9 +45,7 @@ $mysqli->close();
         <?php endif; ?>
     </ul>
 
-    <a href="ExternalAgency.php">
-        <button type="button">Go to External Agency Data</button>
-    </a>
+
 
 </body>
 </html>

@@ -51,8 +51,6 @@ $mysqli->close();
         <button type="submit">Delete Record</button>
     </form>
 
-    <a href="DrivingSchool.php">
-        <button type="button">Go back to Driving School Data</button>
-    </a>
+
 </body>
 </html>

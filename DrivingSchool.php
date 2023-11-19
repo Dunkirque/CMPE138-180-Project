@@ -69,7 +69,7 @@ $mysqli->close();
             <?php endforeach; ?>
         <?php endif; ?>
     </ul>
-
+<!--
     <a href="Person.php">
         <button type="button">Go to Person Data</button>
     </a>
@@ -85,5 +85,6 @@ $mysqli->close();
     <a href="deleteDrivingSchool.php">
         <button type="button">Delete Driving School Data</button>
     </a>
+            -->
 </body>
 </html>
