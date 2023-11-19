@@ -9,6 +9,8 @@ $keywordsearch = $_GET("keyword");
 echo <h2> "Showing records with Driver School name $keywordsearch " </h2>;
 
 $sql = "SELECT DSName, CertRegNumber, Manager FROM DrivingSchool WHERE DSName LIKE '%". $keywordsearch ."%' ";
-$result 
+$result = $mysqli->query($sql);
+
+
 
 ?>
