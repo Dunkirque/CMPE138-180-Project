@@ -10,20 +10,37 @@
 
     <h1>Home Person Page</h1>
     <h2>
-    <a href="LoginPage.php">
-        <button type="button">I am a Database User with an Account (Login)</button>
+    <a href="LicenseRequestor.php">
+        <button type="button">Go to License Requestor Data</button>
+    </a>
+    </h2>
+    <h2>
+    <a href="selectLicenseRequestor.php">
+        <button type="button">View License Requestor Data</button>
     </a>
     </h2>
 
     <h2>
-    <a href="RegistrationPage.php">
-        <button type="button">I am a Database User without an Account (Registration)</button>
+    <a href="CurrentDriver.php">
+        <button type="button">Go to Current Driver Data</button>
     </a>
     </h2>
 
     <h2>
-    <a href="LoginAdminpage.php">
-        <button type="button">I am a Database Admin</button>
+    <a href="selectCurrentDriver.php">
+        <button type="button">View Current Driver Data</button>
+    </a>
+    </h2>
+
+    <h2>
+    <a href="VehicleRegistrationRequestor.php">
+        <button type="button">Go to Vehicle Registration Requestor Data</button>
+    </a>
+    </h2>
+
+    <h2>
+    <a href="selectVehicleRegistrationRequestor.php">
+        <button type="button">View Vehicle Registration Requestor Data</button>
     </a>
     </h2>
 
