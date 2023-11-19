@@ -191,5 +191,6 @@ $mysqli->close();
     <a href="selectInspector.php">
         <button type="button">View Inspector Employee Data</button>
     </a>
+    
 </body>
 </html>

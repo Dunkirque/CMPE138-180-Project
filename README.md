@@ -17,3 +17,6 @@ Password=Password
 **Going in as a database admin is how you can initialize accounts for driving school, employees, external agencies (Using "Go To Registration Admin Page")
 
 **Users will usually follow the pattern of logging in through home page, being shown the corresponding home page to of their role (HomePage for ComplianceAgent is different for HomePage for DMV "Customers" like LicenseRequestor/CurrentDriver/VehicleRegistrationRequestor), then going into various functions (insert/view/update/delete) and being able to back out to their HomePage
+
+**tables can also be accessed through mySQL utilizing the database hosting link utilizing AWS link providede in the project report alongside with the username and password
+
