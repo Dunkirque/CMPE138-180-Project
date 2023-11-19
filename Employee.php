@@ -120,77 +120,7 @@ $mysqli->close();
         <?php endif; ?>
     </ul>
 
-    <!-- No need for buttons related to specific roles here -->
-
-    <a href="Person.php">
-        <button type="button">Go to Person Data</button>
-    </a>
-    <a href="DrivingSchool.php">
-        <button type="button">Go to Driving School Data</button>
-    </a>
-    <a href="ExternalAgency.php">
-        <button type="button">Go to External Agency Data</button>
-    </a>
-    <a href="updateEmployee.php">
-        <button type="button">Update Employee Data</button>
-    </a>
-    <a href="updateAdminEmp.php">
-        <button type="button">Update Admin Employee Data</button>
-    </a>
-    <a href="updateApplicationEmp.php">
-        <button type="button">Update Application Employee Data</button>
-    </a>
-    <a href="updateAuditor.php">
-        <button type="button">Update Auditor Employee Data</button>
-    </a>
-    <a href="updateComplianceAgent.php">
-        <button type="button">Update Compliance Agent Employee Data</button>
-    </a>
-    <a href="updateDataEntryEmp.php">
-        <button type="button">Update Data Entry Employee Data</button>
-    </a>
-    <a href="updateInspector.php">
-        <button type="button">Update Inspector Employee Data</button>
-    </a>
-    <a href="deleteEmployee.php">
-        <button type="button">Delete Employee Data</button>
-    </a>
-    <a href="deleteAdminEmp.php">
-        <button type="button">Delete Admin Employee Data</button>
-    </a>
-    <a href="deleteApplicationEmp.php">
-        <button type="button">Delete Application Employee Data</button>
-    </a>
-    <a href="deleteAuditor.php">
-        <button type="button">Delete Auditor Employee Data</button>
-    </a>
-    <a href="deleteComplianceAgent.php">
-        <button type="button">Delete Compliance Agent Employee Data</button>
-    </a>
-    <a href="deleteDataEntryEmp.php">
-        <button type="button">Delete Data Entry Employee Data</button>
-    </a>
-    <a href="deleteInspector.php">
-        <button type="button">Delete Inspector Employee Data</button>
-    </a>
-    <a href="selectAdminEmp.php">
-        <button type="button">View Admin Employee Data</button>
-    </a>
-    <a href="selectApplicationEmp.php">
-        <button type="button">View Application Employee Data</button>
-    </a>
-    <a href="selectAuditor.php">
-        <button type="button">View Auditor Employee Data</button>
-    </a>
-    <a href="selectComplianceAgent.php">
-        <button type="button">View Compliance Agent Employee Data</button>
-    </a>
-    <a href="selectDataEntryEmp.php">
-        <button type="button">View Data Entry Employee Data</button>
-    </a>
-    <a href="selectInspector.php">
-        <button type="button">View Inspector Employee Data</button>
-    </a>
+    
     
 </body>
 </html>

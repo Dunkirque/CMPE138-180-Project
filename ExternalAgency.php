@@ -114,48 +114,6 @@ $mysqli->close();
         <?php endif; ?>
     </ul>
 
-    <a href="Person.php">
-        <button type="button">Go to Person Data</button>
-    </a>
-    <a href="DrivingSchool.php">
-        <button type="button">Go to Driving School Data</button>
-    </a>
-    <a href="Employee.php">
-        <button type="button">Go to Employee Data</button>
-    </a>
-    <a href="updateExternalAgency.php">
-        <button type="button">Update External Agency Data</button>
-    </a>
-    <a href="updateGovAgencies.php">
-        <button type="button">Update Government Agency Data</button>
-    </a>
-    <a href="updateLawAgencies.php">
-        <button type="button">Update Law Agency Data</button>
-    </a>
-    <a href="updateVehicleManu.php">
-        <button type="button">Update Vehicle Manufacturer Data</button>
-    </a>
-    <a href="deleteExternalAgency.php">
-        <button type="button">Delete External Agency Data</button>
-    </a>
-    <a href="deleteGovAgencies.php">
-        <button type="button">Delete Government Agency Data</button>
-    </a>
-    <a href="deleteLawAgencies.php">
-        <button type="button">Delete Law Agency Data</button>
-    </a>
-    <a href="deleteVehicleManu.php">
-        <button type="button">Delete Vehicle Manufacturer Data</button>
-    </a>
-    
-    <a href="selectGovAgencies.php">
-        <button type="button">View Government Agency Data</button>
-    </a>
-    <a href="selectLawAgencies.php">
-        <button type="button">View Law Agency Data</button>
-    </a>
-    <a href="selectVehicleManu.php">
-        <button type="button">View Vehicle Manufacturer Data</button>
-    </a>
+
 </body>
 </html>

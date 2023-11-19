@@ -39,6 +39,42 @@
     <a href="ExternalAgency.php">
         <button type="button">Go to External Agency Data</button>
     </a>
+    <a href="LicenseRequestor.php">
+        <button type="button">Go to License Requestor Data</button>
+    </a>
+    <a href="CurrentDriver.php">
+        <button type="button">Go to Current Driver Data</button>
+    </a>
+    <a href="VehicleRegistrationRequestor.php">
+        <button type="button">Go to Vehicle Registration Requestor Data</button>
+    </a>
+    <a href="GovAgencies.php">
+        <button type="button">Go to Government Agency Data</button>
+    </a>
+    <a href="LawAgencies.php">
+        <button type="button">Go to Law Agency Data</button>
+    </a>
+    <a href="VehicleManu.php">
+        <button type="button">Go to Vehicle Manufacturer Data</button>
+    </a>
+    <a href="AdminEmp.php">
+        <button type="button">Go to Admin Employee Data</button>
+    </a>
+    <a href="ApplicationEmp.php">
+        <button type="button">Go to Application Employee Data</button>
+    </a>
+    <a href="Auditor.php">
+        <button type="button">Go to Auditor Employee Data</button>
+    </a>
+    <a href="ComplianceAgent.php">
+        <button type="button">Go to Compliance Agent Employee Data</button>
+    </a>
+    <a href="DataEntryEmp.php">
+        <button type="button">Go to Data Entry Employee Data</button>
+    </a>
+    <a href="Inspector.php">
+        <button type="button">Go to Inspector Employee Data</button>
+    </a>
 
 
 
