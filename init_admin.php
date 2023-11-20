@@ -1,5 +1,7 @@
 <?php
 // Include the database connection file
+//SJSU CMPE 138 Fall 2023 Team 11
+
 require_once('db_connect.php');
 
 // Check if the form is submitted (using POST method)

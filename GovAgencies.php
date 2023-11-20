@@ -1,4 +1,5 @@
 <?php
+//SJSU CMPE 138 Fall 2023 Team 11
 // Include the database connection file
 require_once('db_connect.php');
 

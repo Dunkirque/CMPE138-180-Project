@@ -1,4 +1,5 @@
 -- init_data.sql
+--SJSU CMPE 138 Fall 2023 Team 11
 
 -- Create your database and switch to it
 CREATE DATABASE IF NOT EXISTS Project;
